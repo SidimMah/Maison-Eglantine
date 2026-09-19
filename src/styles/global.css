@@ -63,31 +63,34 @@ img{max-width:100%;display:block}
 .pill{border:1px solid var(--line);padding:9px 12px;border-radius:999px;font-size:12px}
 .testimonials{background:#22251f;color:#faf6ed;text-align:center}
 .quote{font-family:'Playfair Display',serif;font-size:clamp(32px,5vw,64px);line-height:1.15;max-width:1000px;margin:30px auto}
-.collection-hero{padding:90px 6vw 55px;background:var(--ivory)}
-.collection-grid{padding:50px 6vw 110px}
-.product-page{display:grid;grid-template-columns:1.15fr .85fr;gap:6vw;padding:46px 6vw 110px}
-.gallery{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.collection-hero{min-height:46vh;padding:8vw 6vw 44px;background:var(--ivory);display:flex;flex-direction:column;justify-content:space-between;border-bottom:1px solid var(--line)}
+.collection-hero h1{font-family:'Playfair Display',serif;font-size:clamp(60px,9vw,144px);line-height:.82;letter-spacing:-.055em;margin:22px 0 18px}
+.collection-hero-copy>p{max-width:450px;margin:0;color:var(--muted);font-size:16px;line-height:1.7}
+.collection-meta{display:flex;justify-content:space-between;margin-top:8vw;text-transform:uppercase;letter-spacing:.13em;font-size:10px;color:var(--muted)}
+.collection-grid{padding:44px 6vw 120px}
+.collection-intro{max-width:500px;font-family:'Playfair Display',serif;font-size:25px;line-height:1.32;margin:0 0 46px}.collection-intro p{margin:0}
+.product-page{display:grid;grid-template-columns:1.15fr .85fr;gap:6vw;padding:46px 6vw 120px}.gallery{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .gallery .shot{aspect-ratio:3/4;background:#ece8df;margin:0;overflow:hidden}
 .gallery .shot img{width:100%;height:100%;object-fit:cover}
 .product-info{position:sticky;top:100px;align-self:start}
-.product-info h1{font-family:'Playfair Display',serif;font-size:54px;margin:0 0 12px}
+.product-info h1{font-family:'Playfair Display',serif;font-size:clamp(42px,4vw,62px);line-height:.95;letter-spacing:-.04em;margin:10px 0 16px}
 .product-description{line-height:1.8;color:#55534e;margin-top:24px}
-.product-reassurance{display:grid;gap:8px;margin-top:18px;color:var(--muted);font-size:13px}
+.product-reassurance{display:grid;gap:9px;margin-top:22px;padding-top:18px;border-top:1px solid var(--line);color:var(--muted);font-size:12px}.product-reassurance span:before{content:'✦';font-size:10px;color:var(--rose);margin-right:8px}
 .option-group{margin:30px 0}
 .option-row{display:flex;gap:10px;flex-wrap:wrap}
-.option{padding:10px 14px;border:1px solid var(--line);background:white;cursor:pointer}
+.option{padding:11px 15px;border:1px solid var(--line);background:white;cursor:pointer;font:inherit;font-size:13px;transition:.2s ease}.option:hover{border-color:var(--ink)}
 .option.active{border-color:var(--ink);background:var(--ivory)}
-.cart-page,.checkout-page,.simple-page{padding:70px 6vw 120px;max-width:1200px;margin:auto}
-.cart-row{display:grid;grid-template-columns:90px 1fr auto;gap:18px;align-items:center;padding:18px 0;border-bottom:1px solid var(--line)}
-.cart-thumb{aspect-ratio:3/4;background:#ece8df}
-.summary{margin-top:32px;margin-left:auto;max-width:420px}
+.cart-page,.checkout-page,.simple-page{padding:92px 6vw 120px;max-width:1200px;margin:auto}.cart-row{display:grid;grid-template-columns:110px 1fr auto;gap:22px;align-items:center;padding:22px 0;border-bottom:1px solid var(--line)}.cart-thumb{aspect-ratio:3/4;background:#ece8df;overflow:hidden}.cart-thumb img{width:100%;height:100%;object-fit:cover}.summary{margin-top:40px;margin-left:auto;max-width:420px;background:var(--ivory);padding:24px}
+.cart-details>strong{font-family:'Playfair Display',serif;font-size:22px;font-weight:600}.cart-variant{color:var(--muted);font-size:13px;margin-top:5px}.cart-actions{display:flex;align-items:center;gap:17px;margin-top:16px}.quantity-control{display:flex;align-items:center;border:1px solid var(--line)}.quantity-control button{border:0;background:transparent;padding:6px 10px;cursor:pointer;font-size:17px}.quantity-control span{min-width:28px;text-align:center;font-size:13px}.remove-link{border:0;background:transparent;text-decoration:underline;cursor:pointer;color:var(--muted);font:inherit;font-size:12px}.empty-state{padding:55px 0}.empty-state p{font-family:'Playfair Display',serif;font-size:28px;margin:0 0 20px}
 .summary-line{display:flex;justify-content:space-between;padding:9px 0}
 .summary-line.total{font-weight:600;font-size:20px;border-top:1px solid var(--line);margin-top:10px;padding-top:18px}
 .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .field{display:grid;gap:7px}
 .field.full{grid-column:1/-1}
 input,select,textarea{width:100%;padding:14px 13px;border:1px solid var(--line);background:white;font:inherit}
+input:focus,select:focus,textarea:focus{outline:1px solid var(--ink);border-color:var(--ink)}
 textarea{min-height:120px}
+.checkout-summary{background:var(--ivory);padding:28px;align-self:start}.confirmation-page{text-align:center;max-width:760px;padding-top:120px}.confirmation-mark{font-size:44px;color:var(--rose);margin-bottom:20px}.confirmation-number{font-size:20px;font-weight:600;margin:26px 0 4px}.confirmation-total{color:var(--muted);margin:0}.confirmation-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:34px}
 .reveal{opacity:0;transform:translateY(26px);transition:opacity .9s ease,transform .9s cubic-bezier(.2,.8,.2,1)}
 .reveal.is-visible{opacity:1;transform:none}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}.reveal{opacity:1;transform:none;transition:none}}
@@ -100,6 +103,7 @@ textarea{min-height:120px}
   .product-info{position:static}
   .site-footer{grid-template-columns:1fr}
   .payment-note,.copyright{grid-column:auto}
+  .collection-hero{min-height:380px;padding:90px 20px 26px}.collection-grid{padding:36px 20px 82px}.cart-page,.checkout-page,.simple-page{padding:74px 20px 90px}.cart-row{grid-template-columns:78px 1fr;gap:15px}.cart-row>strong{grid-column:2;justify-self:start;margin-top:-10px}.checkout-summary{margin-top:36px}
 }
 @media(max-width:560px){
   .hero{min-height:78vh;margin:0;border-radius:0;padding:28px 20px;background-position:58% center}
@@ -110,4 +114,6 @@ textarea{min-height:120px}
   .gallery{grid-template-columns:1fr}
   .form-grid{grid-template-columns:1fr}
   .field.full{grid-column:auto}
+  .collection-hero h1{font-size:62px}.collection-meta{margin-top:52px;font-size:9px}.collection-intro{font-size:22px;margin-bottom:34px}.summary{padding:20px}
+  .cart-details>strong{font-size:19px}.cart-actions{gap:10px}
 }
