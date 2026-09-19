@@ -66,7 +66,7 @@ export const products: Product[] = [
   {
     slug: 'kemkha',
     name: 'Kemkha',
-    category: 'pret-a-porter',
+    category: 'traditionnel',
     price: 12000,
     description: 'Kemkha est une pièce fluide et élégante, sublimée par une texture délicate, des finitions soignées et une ceinture assortie qui souligne la silhouette avec finesse. Disponible en Vert, Gris et Noir.',
     colors: ['Vert', 'Gris', 'Noir'],
