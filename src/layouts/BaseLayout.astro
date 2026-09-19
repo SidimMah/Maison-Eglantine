@@ -1,0 +1,51 @@
+---
+import '../styles/global.css';
+const {
+  title = 'Maison Eglantine',
+  description = 'Maison Eglantine — confection artisanale en Algérie.'
+} = Astro.props;
+---
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="description" content={description} />
+    <title>{title}</title>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="wordmark" href="/">Maison Eglantine</a>
+      <nav aria-label="Navigation principale">
+        <a href="/">Accueil</a>
+        <a href="/#eglantine">Eglantine</a>
+        <a href="/pret-a-porter">Prêt-à-Porter</a>
+        <a href="/traditionnel">Traditionnel</a>
+      </nav>
+      <a class="cart-link" href="/panier" aria-label="Panier">Panier <span id="cart-count">0</span></a>
+    </header>
+    <main>
+      <slot />
+    </main>
+    <footer class="site-footer">
+      <div>
+        <div class="wordmark footer-wordmark">Maison Eglantine</div>
+        <p>Confection artisanale · Algérie</p>
+      </div>
+      <div class="footer-links">
+        <a href="/#eglantine">La Maison</a>
+        <a href="/livraison">Livraison & retours</a>
+        <a href="/contact">Contact</a>
+        <a href="#">Instagram</a>
+      </div>
+      <p class="payment-note">Paiement en espèces à la livraison</p>
+      <p class="copyright">© 2026 Maison Eglantine</p>
+    </footer>
+    <script is:inline>
+      const cart = JSON.parse(localStorage.getItem('maison-eglantine-cart') || '[]');
+      const count = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
+      const target = document.getElementById('cart-count');
+      if (target) target.textContent = count;
+    </script>
+  </body>
+</html>
