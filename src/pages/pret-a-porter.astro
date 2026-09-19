@@ -6,11 +6,15 @@ const items = products.filter((p) => p.category === 'pret-a-porter');
 ---
 <BaseLayout title="Prêt-à-Porter — Maison Eglantine">
   <section class="collection-hero">
-    <div class="eyebrow">Maison Eglantine</div>
-    <h1 class="section-title">Prêt-à-Porter</h1>
-    <p>L’élégance au quotidien.</p>
+    <div class="collection-hero-copy">
+      <div class="eyebrow">Maison Eglantine · Collection</div>
+      <h1>Prêt-à-Porter</h1>
+      <p>Des pièces fluides et élégantes, pensées pour accompagner le quotidien.</p>
+    </div>
+    <div class="collection-meta"><span>{items.length} créations</span><span>Petites séries</span></div>
   </section>
   <section class="collection-grid">
+    <div class="collection-intro"><p>Le confort d’une coupe juste, l’allure d’une pièce que l’on garde longtemps.</p></div>
     <div class="product-grid">
       {items.map((product) => <ProductCard product={product} />)}
     </div>
