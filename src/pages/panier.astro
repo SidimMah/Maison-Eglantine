@@ -41,7 +41,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         const row = document.createElement('div');
         row.className = 'cart-row';
         row.innerHTML = `
-          <div class="cart-thumb"></div>
+          <div class="cart-thumb">${item.image ? '<img src="' + item.image + '" alt="' + item.name + '">' : ''}</div>
           <div>
             <strong>${item.name}</strong>
             <div style="color:var(--muted);font-size:13px;margin-top:5px">${item.color} · Taille ${item.size}</div>
