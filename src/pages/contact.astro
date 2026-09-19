@@ -1,0 +1,15 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+<BaseLayout title="Contact — Maison Eglantine">
+  <section class="simple-page" style="max-width:760px">
+    <div class="eyebrow">Maison Eglantine</div>
+    <h1 class="section-title">Parlons-nous</h1>
+    <form class="form-grid">
+      <label class="field">Nom<input required /></label>
+      <label class="field">Téléphone ou email<input required /></label>
+      <label class="field full">Message<textarea required></textarea></label>
+      <div class="field full"><button class="btn btn-dark" type="submit">Envoyer</button></div>
+    </form>
+  </section>
+</BaseLayout>
