@@ -10,33 +10,40 @@ export function getStaticPaths() {
 }
 
 const { product } = Astro.props;
+const initialColor = product.colors[0];
+const initialImages = product.images[initialColor] ?? [product.cover];
 ---
 <BaseLayout title={product.name + ' — Maison Eglantine'} description={product.description}>
   <section class="product-page">
-    <div class="gallery">
-      <div class="shot"></div>
-      <div class="shot"></div>
-      <div class="shot"></div>
-      <div class="shot"></div>
+    <div class="gallery" id="product-gallery">
+      {initialImages.map((src, index) => (
+        <figure class="shot">
+          <img src={src} alt={product.name + ' — ' + initialColor + ' — vue ' + (index + 1)} loading={index < 2 ? 'eager' : 'lazy'} />
+        </figure>
+      ))}
     </div>
 
     <aside class="product-info">
       <div class="eyebrow">{product.category === 'traditionnel' ? 'Traditionnel' : 'Prêt-à-Porter'}</div>
       <h1>{product.name}</h1>
       <div class="price" style="font-size:18px;color:var(--ink)">{formatPrice(product.price)}</div>
-      <p style="line-height:1.8;color:#55534e;margin-top:24px">{product.description}</p>
+      <p class="product-description">{product.description}</p>
 
       <div class="option-group">
         <div class="eyebrow" style="margin-bottom:10px">Couleur</div>
         <div class="option-row" data-color-options>
-          {product.colors.map((color, index) => <button class:list={['option', {active:index === 0}]} type="button" data-value={color}>{color}</button>)}
+          {product.colors.map((color, index) => (
+            <button class:list={['option', {active:index === 0}]} type="button" data-value={color}>{color}</button>
+          ))}
         </div>
       </div>
 
       <div class="option-group">
         <div class="eyebrow" style="margin-bottom:10px">Taille</div>
         <div class="option-row" data-size-options>
-          {product.sizes.map((size, index) => <button class:list={['option', {active:index === 0}]} type="button" data-value={size}>{size}</button>)}
+          {product.sizes.map((size, index) => (
+            <button class:list={['option', {active:index === 0}]} type="button" data-value={size}>{size}</button>
+          ))}
         </div>
       </div>
 
@@ -46,11 +53,15 @@ const { product } = Astro.props;
       </div>
 
       <button id="add-to-cart" class="btn btn-dark" style="width:100%">Ajouter au panier</button>
-      <p style="font-size:13px;color:var(--muted);margin-top:18px">Paiement à la livraison · Confectionné en Algérie</p>
+      <div class="product-reassurance">
+        <span>Paiement à la livraison</span>
+        <span>Confectionné en Algérie</span>
+      </div>
     </aside>
   </section>
 
   <script define:vars={{ product }}>
+    const gallery = document.getElementById('product-gallery');
     const colorButtons = [...document.querySelectorAll('[data-color-options] .option')];
     const sizeButtons = [...document.querySelectorAll('[data-size-options] .option')];
 
@@ -58,7 +69,18 @@ const { product } = Astro.props;
       buttons.forEach((btn) => btn.classList.toggle('active', btn === target));
     };
 
-    colorButtons.forEach((btn) => btn.addEventListener('click', () => activate(colorButtons, btn)));
+    const renderGallery = (color) => {
+      const images = product.images[color] || [product.cover];
+      gallery.innerHTML = images.map((src, index) =>
+        '<figure class="shot"><img src="' + src + '" alt="' + product.name + ' — ' + color + ' — vue ' + (index + 1) + '" loading="lazy"></figure>'
+      ).join('');
+    };
+
+    colorButtons.forEach((btn) => btn.addEventListener('click', () => {
+      activate(colorButtons, btn);
+      renderGallery(btn.dataset.value);
+    }));
+
     sizeButtons.forEach((btn) => btn.addEventListener('click', () => activate(sizeButtons, btn)));
 
     document.getElementById('add-to-cart')?.addEventListener('click', () => {
@@ -71,6 +93,7 @@ const { product } = Astro.props;
         slug: product.slug,
         name: product.name,
         price: product.price,
+        image: (product.images[color] || [product.cover])[0],
         color,
         size,
         quantity
