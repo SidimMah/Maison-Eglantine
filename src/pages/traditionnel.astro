@@ -6,11 +6,15 @@ const items = products.filter((p) => p.category === 'traditionnel');
 ---
 <BaseLayout title="Traditionnel — Maison Eglantine">
   <section class="collection-hero">
-    <div class="eyebrow">Maison Eglantine</div>
-    <h1 class="section-title">Traditionnel</h1>
-    <p>L’héritage réinterprété.</p>
+    <div class="collection-hero-copy">
+      <div class="eyebrow">Maison Eglantine · Collection</div>
+      <h1>Traditionnel</h1>
+      <p>L’héritage réinterprété avec douceur, précision et modernité.</p>
+    </div>
+    <div class="collection-meta"><span>{items.length} créations</span><span>Confection en Algérie</span></div>
   </section>
   <section class="collection-grid">
+    <div class="collection-intro"><p>Des silhouettes de caractère, imaginées pour les moments qui comptent.</p></div>
     <div class="product-grid">
       {items.map((product) => <ProductCard product={product} />)}
     </div>
