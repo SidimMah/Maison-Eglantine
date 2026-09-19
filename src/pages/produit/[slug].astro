@@ -1,0 +1,83 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { products, formatPrice } from '../../data/products';
+
+export function getStaticPaths() {
+  return products.map((product) => ({
+    params: { slug: product.slug },
+    props: { product }
+  }));
+}
+
+const { product } = Astro.props;
+---
+<BaseLayout title={product.name + ' — Maison Eglantine'} description={product.description}>
+  <section class="product-page">
+    <div class="gallery">
+      <div class="shot"></div>
+      <div class="shot"></div>
+      <div class="shot"></div>
+      <div class="shot"></div>
+    </div>
+
+    <aside class="product-info">
+      <div class="eyebrow">{product.category === 'traditionnel' ? 'Traditionnel' : 'Prêt-à-Porter'}</div>
+      <h1>{product.name}</h1>
+      <div class="price" style="font-size:18px;color:var(--ink)">{formatPrice(product.price)}</div>
+      <p style="line-height:1.8;color:#55534e;margin-top:24px">{product.description}</p>
+
+      <div class="option-group">
+        <div class="eyebrow" style="margin-bottom:10px">Couleur</div>
+        <div class="option-row" data-color-options>
+          {product.colors.map((color, index) => <button class:list={['option', {active:index === 0}]} type="button" data-value={color}>{color}</button>)}
+        </div>
+      </div>
+
+      <div class="option-group">
+        <div class="eyebrow" style="margin-bottom:10px">Taille</div>
+        <div class="option-row" data-size-options>
+          {product.sizes.map((size, index) => <button class:list={['option', {active:index === 0}]} type="button" data-value={size}>{size}</button>)}
+        </div>
+      </div>
+
+      <div class="option-group">
+        <label class="eyebrow" for="quantity" style="display:block;margin-bottom:10px">Quantité</label>
+        <input id="quantity" type="number" min="1" value="1" style="max-width:100px" />
+      </div>
+
+      <button id="add-to-cart" class="btn btn-dark" style="width:100%">Ajouter au panier</button>
+      <p style="font-size:13px;color:var(--muted);margin-top:18px">Paiement à la livraison · Confectionné en Algérie</p>
+    </aside>
+  </section>
+
+  <script define:vars={{ product }}>
+    const colorButtons = [...document.querySelectorAll('[data-color-options] .option')];
+    const sizeButtons = [...document.querySelectorAll('[data-size-options] .option')];
+
+    const activate = (buttons, target) => {
+      buttons.forEach((btn) => btn.classList.toggle('active', btn === target));
+    };
+
+    colorButtons.forEach((btn) => btn.addEventListener('click', () => activate(colorButtons, btn)));
+    sizeButtons.forEach((btn) => btn.addEventListener('click', () => activate(sizeButtons, btn)));
+
+    document.getElementById('add-to-cart')?.addEventListener('click', () => {
+      const color = document.querySelector('[data-color-options] .active')?.dataset.value;
+      const size = document.querySelector('[data-size-options] .active')?.dataset.value;
+      const quantity = Math.max(1, Number(document.getElementById('quantity')?.value || 1));
+      const cart = JSON.parse(localStorage.getItem('maison-eglantine-cart') || '[]');
+
+      cart.push({
+        slug: product.slug,
+        name: product.name,
+        price: product.price,
+        color,
+        size,
+        quantity
+      });
+
+      localStorage.setItem('maison-eglantine-cart', JSON.stringify(cart));
+      window.location.href = '/panier';
+    });
+  </script>
+</BaseLayout>
