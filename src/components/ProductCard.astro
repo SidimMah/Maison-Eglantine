@@ -1,0 +1,9 @@
+---
+import { formatPrice } from '../data/products';
+const { product } = Astro.props;
+---
+<a class="product-card" href={'/produit/' + product.slug}>
+  <div class="product-image" aria-hidden="true"></div>
+  <h3>{product.name}</h3>
+  <div class="price">{formatPrice(product.price)}</div>
+</a>
