@@ -1,0 +1,18 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ProductCard from '../components/ProductCard.astro';
+import { products } from '../data/products';
+const items = products.filter((p) => p.category === 'traditionnel');
+---
+<BaseLayout title="Traditionnel — Maison Eglantine">
+  <section class="collection-hero">
+    <div class="eyebrow">Maison Eglantine</div>
+    <h1 class="section-title">Traditionnel</h1>
+    <p>L’héritage réinterprété.</p>
+  </section>
+  <section class="collection-grid">
+    <div class="product-grid">
+      {items.map((product) => <ProductCard product={product} />)}
+    </div>
+  </section>
+</BaseLayout>
