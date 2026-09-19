@@ -1,6 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { products, formatPrice } from '../../data/products';
+import { assetUrl, products, formatPrice } from '../../data/products';
 
 export function getStaticPaths() {
   return products.map((product) => ({
@@ -12,13 +12,16 @@ export function getStaticPaths() {
 const { product } = Astro.props;
 const initialColor = product.colors[0];
 const initialImages = product.images[initialColor] ?? [product.cover];
+const base = import.meta.env.BASE_URL.endsWith('/')
+  ? import.meta.env.BASE_URL
+  : import.meta.env.BASE_URL + '/';
 ---
 <BaseLayout title={product.name + ' — Maison Eglantine'} description={product.description}>
   <section class="product-page">
     <div class="gallery" id="product-gallery">
       {initialImages.map((src, index) => (
         <figure class="shot">
-          <img src={src} alt={product.name + ' — ' + initialColor + ' — vue ' + (index + 1)} loading={index < 2 ? 'eager' : 'lazy'} />
+          <img src={assetUrl(src)} alt={product.name + ' — ' + initialColor + ' — vue ' + (index + 1)} loading={index < 2 ? 'eager' : 'lazy'} />
         </figure>
       ))}
     </div>
@@ -60,7 +63,7 @@ const initialImages = product.images[initialColor] ?? [product.cover];
     </aside>
   </section>
 
-  <script define:vars={{ product }}>
+  <script define:vars={{ product, base }}>
     const gallery = document.getElementById('product-gallery');
     const colorButtons = [...document.querySelectorAll('[data-color-options] .option')];
     const sizeButtons = [...document.querySelectorAll('[data-size-options] .option')];
@@ -72,7 +75,7 @@ const initialImages = product.images[initialColor] ?? [product.cover];
     const renderGallery = (color) => {
       const images = product.images[color] || [product.cover];
       gallery.innerHTML = images.map((src, index) =>
-        '<figure class="shot"><img src="' + src + '" alt="' + product.name + ' — ' + color + ' — vue ' + (index + 1) + '" loading="lazy"></figure>'
+        '<figure class="shot"><img src="' + base + src.slice(1) + '" alt="' + product.name + ' — ' + color + ' — vue ' + (index + 1) + '" loading="lazy"></figure>'
       ).join('');
     };
 
@@ -93,14 +96,14 @@ const initialImages = product.images[initialColor] ?? [product.cover];
         slug: product.slug,
         name: product.name,
         price: product.price,
-        image: (product.images[color] || [product.cover])[0],
+        image: base + (product.images[color] || [product.cover])[0].slice(1),
         color,
         size,
         quantity
       });
 
       localStorage.setItem('maison-eglantine-cart', JSON.stringify(cart));
-      window.location.href = '/panier';
+      window.location.href = base + 'panier';
     });
   </script>
 </BaseLayout>
