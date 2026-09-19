@@ -1,0 +1,78 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+<BaseLayout title="Panier — Maison Eglantine">
+  <section class="cart-page">
+    <div class="eyebrow">Votre sélection</div>
+    <h1 class="section-title">Panier</h1>
+    <div id="cart-items"></div>
+    <div id="empty-cart" style="display:none;padding:40px 0;color:var(--muted)">Votre panier est vide.</div>
+    <div class="summary" id="cart-summary">
+      <div class="summary-line total"><span>Sous-total</span><span id="subtotal">0 DA</span></div>
+      <p style="color:var(--muted);font-size:13px">Les frais de livraison seront calculés à l’étape suivante selon votre wilaya.</p>
+      <a class="btn btn-dark" style="width:100%;margin-top:12px" href="/commande">Passer la commande</a>
+    </div>
+  </section>
+
+  <script is:inline>
+    const KEY = 'maison-eglantine-cart';
+    const format = (n) => new Intl.NumberFormat('fr-DZ').format(n) + ' DA';
+    let cart = JSON.parse(localStorage.getItem(KEY) || '[]');
+    const root = document.getElementById('cart-items');
+    const empty = document.getElementById('empty-cart');
+    const summary = document.getElementById('cart-summary');
+
+    function save() {
+      localStorage.setItem(KEY, JSON.stringify(cart));
+      render();
+    }
+
+    function render() {
+      root.innerHTML = '';
+      if (!cart.length) {
+        empty.style.display = 'block';
+        summary.style.display = 'none';
+        return;
+      }
+      empty.style.display = 'none';
+      summary.style.display = 'block';
+
+      cart.forEach((item, index) => {
+        const row = document.createElement('div');
+        row.className = 'cart-row';
+        row.innerHTML = `
+          <div class="cart-thumb"></div>
+          <div>
+            <strong>${item.name}</strong>
+            <div style="color:var(--muted);font-size:13px;margin-top:5px">${item.color} · Taille ${item.size}</div>
+            <div style="margin-top:10px">
+              <button data-minus="${index}">−</button>
+              <span style="padding:0 10px">${item.quantity}</span>
+              <button data-plus="${index}">+</button>
+              <button data-remove="${index}" style="margin-left:14px">Supprimer</button>
+            </div>
+          </div>
+          <strong>${format(item.price * item.quantity)}</strong>
+        `;
+        root.appendChild(row);
+      });
+
+      document.getElementById('subtotal').textContent = format(cart.reduce((s, i) => s + i.price * i.quantity, 0));
+
+      root.querySelectorAll('[data-minus]').forEach((b) => b.onclick = () => {
+        const i = Number(b.dataset.minus);
+        cart[i].quantity = Math.max(1, cart[i].quantity - 1);
+        save();
+      });
+      root.querySelectorAll('[data-plus]').forEach((b) => b.onclick = () => {
+        cart[Number(b.dataset.plus)].quantity++;
+        save();
+      });
+      root.querySelectorAll('[data-remove]').forEach((b) => b.onclick = () => {
+        cart.splice(Number(b.dataset.remove), 1);
+        save();
+      });
+    }
+    render();
+  </script>
+</BaseLayout>
