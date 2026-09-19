@@ -2,6 +2,9 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ProductCard from '../components/ProductCard.astro';
 import { products } from '../data/products';
+const base = import.meta.env.BASE_URL.endsWith('/')
+  ? import.meta.env.BASE_URL
+  : import.meta.env.BASE_URL + '/';
 ---
 <BaseLayout title="Maison Eglantine — Élégance artisanale">
   <section class="hero">
@@ -27,14 +30,14 @@ import { products } from '../data/products';
   <section id="collections" class="section">
     <div class="eyebrow">Les univers</div>
     <div class="category-grid" style="margin-top:28px">
-      <a class="category-card category-traditionnel" href="/traditionnel">
+      <a class="category-card category-traditionnel" href={base + 'traditionnel'}>
         <div>
           <div class="eyebrow" style="color:#fff">Collection</div>
           <h3>Traditionnel</h3>
           <p>L’héritage réinterprété.</p>
         </div>
       </a>
-      <a class="category-card category-pret" href="/pret-a-porter">
+      <a class="category-card category-pret" href={base + 'pret-a-porter'}>
         <div>
           <div class="eyebrow" style="color:#fff">Collection</div>
           <h3>Prêt-à-Porter</h3>
@@ -55,7 +58,7 @@ import { products } from '../data/products';
 
   <section class="section craft">
     <div class="craft-media">
-      <img src="/images/home/savoir-faire.webp" alt="Détail de confection Maison Eglantine" loading="lazy" />
+      <img src={base + 'images/home/savoir-faire.webp'} alt="Détail de confection Maison Eglantine" loading="lazy" />
     </div>
     <div class="craft-copy reveal">
       <div class="eyebrow">Notre savoir-faire</div>
