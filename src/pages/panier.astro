@@ -30,6 +30,9 @@ const base = import.meta.env.BASE_URL.endsWith('/')
 
     function save() {
       localStorage.setItem(KEY, JSON.stringify(cart));
+      const count = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
+      const cartCount = document.getElementById('cart-count');
+      if (cartCount) cartCount.textContent = count;
       render();
     }
 
