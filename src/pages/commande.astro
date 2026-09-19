@@ -1,0 +1,73 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+<BaseLayout title="Commander — Maison Eglantine">
+  <section class="checkout-page">
+    <div class="eyebrow">Finaliser</div>
+    <h1 class="section-title">Votre commande</h1>
+
+    <div style="display:grid;grid-template-columns:1.2fr .8fr;gap:7vw" class="checkout-shell">
+      <form id="checkout-form">
+        <div class="form-grid">
+          <label class="field full">Nom et prénom<input name="name" required /></label>
+          <label class="field">Téléphone<input name="phone" required inputmode="tel" /></label>
+          <label class="field">Wilaya
+            <select name="wilaya" id="wilaya" required>
+              <option value="">Sélectionner</option>
+              <option value="Oran">Oran</option>
+              <option value="Alger">Alger</option>
+              <option value="Tlemcen">Tlemcen</option>
+            </select>
+          </label>
+          <label class="field">Commune<input name="commune" required /></label>
+          <label class="field full">Adresse complète<input name="address" required /></label>
+          <label class="field full">Remarque (facultatif)<textarea name="note"></textarea></label>
+        </div>
+        <label style="display:flex;gap:10px;margin:24px 0;font-size:13px">
+          <input type="checkbox" required style="width:auto" />
+          <span>Je confirme l’exactitude de mes coordonnées et j’accepte les conditions de vente.</span>
+        </label>
+        <button class="btn btn-dark" type="submit">Confirmer ma commande</button>
+      </form>
+
+      <aside>
+        <div class="eyebrow">Récapitulatif</div>
+        <div id="checkout-items" style="margin-top:18px"></div>
+        <div class="summary-line"><span>Sous-total</span><span id="checkout-subtotal">0 DA</span></div>
+        <div class="summary-line"><span>Livraison</span><span id="delivery-fee">À confirmer</span></div>
+        <div class="summary-line total"><span>Total</span><span id="checkout-total">0 DA</span></div>
+        <p style="font-size:13px;color:var(--muted)">Paiement en espèces à la livraison.</p>
+      </aside>
+    </div>
+  </section>
+
+  <script is:inline>
+    const KEY = 'maison-eglantine-cart';
+    const format = (n) => new Intl.NumberFormat('fr-DZ').format(n) + ' DA';
+    const cart = JSON.parse(localStorage.getItem(KEY) || '[]');
+    const subtotal = cart.reduce((s, i) => s + i.price * i.quantity, 0);
+
+    document.getElementById('checkout-items').innerHTML = cart.map(i =>
+      `<div style="padding:10px 0;border-bottom:1px solid var(--line)">
+        <strong>${i.name}</strong><br/>
+        <span style="font-size:13px;color:var(--muted)">${i.color} · ${i.size} · Qté ${i.quantity}</span>
+        <span style="float:right">${format(i.price * i.quantity)}</span>
+      </div>`
+    ).join('');
+
+    document.getElementById('checkout-subtotal').textContent = format(subtotal);
+    document.getElementById('checkout-total').textContent = format(subtotal);
+
+    document.getElementById('checkout-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const orderNumber = 'EG-' + String(Date.now()).slice(-6);
+      localStorage.setItem('maison-eglantine-last-order', JSON.stringify({orderNumber, subtotal, cart}));
+      localStorage.removeItem(KEY);
+      window.location.href = '/confirmation';
+    });
+  </script>
+
+  <style>
+    @media(max-width:800px){.checkout-shell{grid-template-columns:1fr!important}}
+  </style>
+</BaseLayout>
