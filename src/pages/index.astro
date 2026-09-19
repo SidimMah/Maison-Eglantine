@@ -1,0 +1,76 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ProductCard from '../components/ProductCard.astro';
+import { products } from '../data/products';
+---
+<BaseLayout title="Maison Eglantine — Élégance artisanale">
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="eyebrow" style="color:#fff">Maison Eglantine</div>
+      <h1>L’élégance, autrement.</h1>
+      <p>Entre héritage et modernité. Des pièces pensées et confectionnées avec soin en Algérie.</p>
+      <a class="btn" style="border-color:white;color:white" href="#collections">Découvrir la collection</a>
+    </div>
+  </section>
+
+  <section id="eglantine" class="section brand-statement">
+    <div class="eyebrow">La Maison</div>
+    <h2 class="display">MAISON EGLANTINE</h2>
+    <div class="brand-copy">
+      <div></div>
+      <div>
+        <p>Imaginée en Algérie.<br/>Façonnée à la main.<br/>Pensée pour traverser le temps.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="collections" class="section">
+    <div class="eyebrow">Les univers</div>
+    <div class="category-grid" style="margin-top:28px">
+      <a class="category-card" href="/traditionnel">
+        <div>
+          <div class="eyebrow" style="color:#fff">Collection</div>
+          <h3>Traditionnel</h3>
+          <p>L’héritage réinterprété.</p>
+        </div>
+      </a>
+      <a class="category-card" href="/pret-a-porter">
+        <div>
+          <div class="eyebrow" style="color:#fff">Collection</div>
+          <h3>Prêt-à-Porter</h3>
+          <p>L’élégance au quotidien.</p>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="eyebrow">La sélection</div>
+    <h2 class="section-title">Nos pièces</h2>
+    <p style="max-width:520px;color:var(--muted);margin-bottom:34px">Une sélection pensée et confectionnée avec soin.</p>
+    <div class="product-grid">
+      {products.map((product) => <ProductCard product={product} />)}
+    </div>
+  </section>
+
+  <section class="section craft">
+    <div class="craft-media" aria-hidden="true"></div>
+    <div class="craft-copy">
+      <div class="eyebrow">Notre savoir-faire</div>
+      <h2 class="section-title">Fait main. Ici.</h2>
+      <p>Chaque pièce Maison Eglantine est imaginée et confectionnée dans nos ateliers en Algérie. Des matières choisies avec soin, un travail minutieux et cette attention portée aux détails qui rend chaque création singulière.</p>
+      <div class="pill-row">
+        <span class="pill">Savoir-faire</span>
+        <span class="pill">Confection locale</span>
+        <span class="pill">Fait main</span>
+        <span class="pill">Petites séries</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="section testimonials">
+    <div class="eyebrow" style="color:#c9c7c0">Ce qu’elles en disent</div>
+    <blockquote class="quote">“Encore plus beau qu’en photo. Les finitions sont magnifiques.”</blockquote>
+    <p>— Sarah, Oran</p>
+  </section>
+</BaseLayout>
