@@ -11,37 +11,18 @@ const base = import.meta.env.BASE_URL.endsWith('/')
     <h1 class="section-title">Merci pour votre commande.</h1>
     <p>Votre commande a bien été enregistrée.</p>
     <p id="order-number" class="confirmation-number"></p>
-    <div id="delivery-summary" class="confirmation-delivery"></div>
     <p id="order-total" class="confirmation-total"></p>
     <div class="confirmation-actions">
       <a class="btn btn-dark" href={base}>Retour à l’accueil</a>
       <a class="btn" href={base + 'traditionnel'}>Découvrir la collection</a>
     </div>
   </section>
-
   <script is:inline>
     const order = JSON.parse(localStorage.getItem('maison-eglantine-last-order') || 'null');
-    const format = (n) => new Intl.NumberFormat('fr-DZ').format(n) + ' DA';
-
     if (order) {
       document.getElementById('order-number').textContent = 'Commande ' + order.orderNumber;
-
-      const methodLabel = order.deliveryMethod === 'desk'
-        ? 'Retrait en Stop Desk'
-        : 'Livraison à domicile';
-
-      const summary = document.getElementById('delivery-summary');
-      summary.innerHTML =
-        '<p><strong>' + methodLabel + '</strong> · ' + order.customer.wilaya + '</p>' +
-        '<p style="color:var(--muted)">Frais de livraison : ' + format(order.deliveryFee) + '</p>';
-
       document.getElementById('order-total').textContent =
-        'Total à régler à la livraison : ' + format(order.total);
+        'Total à régler à la livraison : ' + new Intl.NumberFormat('fr-DZ').format(order.total || order.subtotal) + ' DA';
     }
   </script>
-
-  <style>
-    .confirmation-delivery{margin:22px 0 6px}
-    .confirmation-delivery p{margin:6px 0}
-  </style>
 </BaseLayout>
