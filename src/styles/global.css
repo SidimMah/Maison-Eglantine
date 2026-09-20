@@ -37,11 +37,11 @@ img{max-width:100%;display:block}
 .hero p{font-size:18px;max-width:520px;margin-bottom:28px}
 .hero-btn{border-color:white;color:white}
 .hero-btn:hover{background:white;color:var(--ink)}
-.brand-statement{min-height:145vh;background:#eee8dc;overflow:hidden;position:relative}
-.brand-statement-inner{position:sticky;top:72px;min-height:calc(100vh - 72px);padding:54px 6vw 70px;display:flex;flex-direction:column;justify-content:space-between}
+.brand-statement{min-height:125vh;background:#eee8dc;overflow:hidden;position:relative}
+.brand-statement-inner{position:sticky;top:72px;min-height:calc(100vh - 72px);padding:44px 6vw 54px;display:flex;flex-direction:column}
 .brand-kicker{display:flex;justify-content:space-between;padding-bottom:14px;border-bottom:1px solid rgba(31,33,30,.28);font-size:10px;text-transform:uppercase;letter-spacing:.2em}
-.brand-stage{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(330px,.75fr);gap:6vw;align-items:end;padding-top:48px}
-.brand-title{margin:0;font-family:'Italiana',serif;font-weight:400;font-size:clamp(90px,12vw,188px);line-height:.72;letter-spacing:-.055em;text-transform:uppercase}
+.brand-stage{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(330px,.75fr);gap:6vw;align-items:center;flex:1;padding:50px 0 28px}
+.brand-title{margin:0;font-family:'Italiana',serif;font-weight:400;font-size:clamp(90px,12vw,188px);line-height:.78;letter-spacing:-.055em;text-transform:uppercase}
 .brand-title-line{display:block;transform:translate3d(0,var(--parallax-y,0),0);will-change:transform}
 .brand-title-line:last-child{margin-left:8vw}
 .brand-title-outline{color:transparent;-webkit-text-stroke:1px var(--ink)}
