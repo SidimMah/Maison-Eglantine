@@ -18,23 +18,23 @@ const base = import.meta.env.BASE_URL.endsWith('/')
 
   <section id="eglantine" class="brand-statement">
     <div class="brand-statement-inner">
-      <div class="brand-kicker reveal">
-        <span>Notre manifeste</span>
-        <span>Oran · Algérie</span>
-      </div>
-      <div class="brand-stage">
-        <h2 class="brand-title" aria-label="Maison Eglantine">
-          <span class="brand-title-line" data-parallax data-speed="-0.055">Maison</span>
-          <span class="brand-title-line brand-title-outline" data-parallax data-speed="0.045">Eglantine</span>
+      <div class="brand-editorial reveal">
+        <div class="brand-kicker"><span>Notre histoire</span></div>
+        <h2 class="brand-title">
+          <span>Maison</span>
+          <em>Eglantine</em>
         </h2>
-        <div class="brand-manifesto reveal" data-parallax data-speed="0.025">
-          <p><strong>Eglantine est une jeune marque algérienne</strong> qui n’a qu’une seule obsession : créer du beau et créer algérien. Laissez-vous charmer par nos collections, qui sublimeront chaque journée de votre quotidien.</p>
-          <div class="brand-notes">
-            <span>Création algérienne</span>
-            <span>Confection soignée</span>
-            <span>Élégance quotidienne</span>
-          </div>
+        <div class="brand-manifesto">
+          <p>Eglantine est une jeune marque algérienne<br class="desktop-break" /> qui n’a qu’une seule obsession :<br class="desktop-break" /> créer du beau et créer algérien.</p>
+          <p>Laissez-vous charmer par nos collections<br class="desktop-break" /> qui sublimeront chaque journée de votre quotidien.</p>
         </div>
+        <a class="brand-cta" href="#collections">
+          <span>Découvrir nos collections</span>
+          <span aria-hidden="true">⟶</span>
+        </a>
+      </div>
+      <div class="brand-visual">
+        <img src={base + 'images/home/maison-story.webp'} alt="Bouquet d’églantines dans un vase artisanal" loading="lazy" data-parallax data-speed="-0.02" />
       </div>
     </div>
   </section>
