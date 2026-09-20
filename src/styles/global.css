@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,ital,wght@6..96,0,500;6..96,0,600;6..96,1,600&family=DM+Sans:wght@400;500;600&family=Italiana&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Allura&family=Bodoni+Moda:opsz,ital,wght@6..96,0,500;6..96,0,600;6..96,1,600&family=DM+Sans:wght@400;500;600&family=Italiana&display=swap');
 
 :root {
   --ivory: #f7f2e8;
@@ -37,18 +37,20 @@ img{max-width:100%;display:block}
 .hero p{font-size:18px;max-width:520px;margin-bottom:28px}
 .hero-btn{border-color:white;color:white}
 .hero-btn:hover{background:white;color:var(--ink)}
-.brand-statement{min-height:125vh;background:#eee8dc;overflow:hidden;position:relative}
-.brand-statement-inner{position:sticky;top:72px;min-height:calc(100vh - 72px);padding:44px 6vw 54px;display:flex;flex-direction:column}
-.brand-kicker{display:flex;justify-content:space-between;padding-bottom:14px;border-bottom:1px solid rgba(31,33,30,.28);font-size:10px;text-transform:uppercase;letter-spacing:.2em}
-.brand-stage{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(330px,.75fr);gap:6vw;align-items:center;flex:1;padding:50px 0 28px}
-.brand-title{margin:0;font-family:'Italiana',serif;font-weight:400;font-size:clamp(90px,12vw,188px);line-height:.78;letter-spacing:-.055em;text-transform:uppercase}
-.brand-title-line{display:block;transform:translate3d(0,var(--parallax-y,0),0);will-change:transform}
-.brand-title-line:last-child{margin-left:8vw}
-.brand-title-outline{color:transparent;-webkit-text-stroke:1px var(--ink)}
-.brand-manifesto{max-width:510px;padding:0 0 16px 34px;border-left:1px solid rgba(31,33,30,.35);transform:translate3d(0,var(--parallax-y,0),0);will-change:transform}
-.brand-manifesto p{margin:0;font-size:clamp(17px,1.55vw,23px);line-height:1.6;color:#3e3e39}
-.brand-manifesto strong{font-family:'Italiana',serif;font-size:1.45em;line-height:1.1;font-weight:400;color:var(--ink)}
-.brand-notes{display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:36px;padding-top:16px;border-top:1px solid rgba(31,33,30,.18);font-size:9px;text-transform:uppercase;letter-spacing:.15em;color:var(--muted)}
+.brand-statement{min-height:115vh;background:#f4f0e7;overflow:hidden;position:relative}
+.brand-statement-inner{position:sticky;top:72px;min-height:calc(100vh - 72px);display:grid;grid-template-columns:52% 48%;overflow:hidden}
+.brand-editorial{padding:5.5vh 4.5vw 4vh 6vw;display:flex;flex-direction:column;justify-content:center;border-bottom:1px solid rgba(77,62,45,.22)}
+.brand-kicker{display:flex;align-items:center;gap:22px;margin-bottom:24px;color:#806d58;font-size:11px;text-transform:uppercase;letter-spacing:.42em}
+.brand-kicker:before,.brand-kicker:after{content:'';width:64px;height:1px;background:#9b856d}
+.brand-title{position:relative;margin:0 0 46px;font-family:'Italiana',serif;font-weight:400;color:#171815}
+.brand-title>span{display:block;font-size:clamp(88px,9.5vw,152px);line-height:.78;letter-spacing:-.035em;text-transform:uppercase}
+.brand-title>em{display:block;margin:-8px 0 0 3vw;font-family:'Allura',cursive;font-size:clamp(82px,9.2vw,148px);line-height:.7;font-weight:400;color:#765f48;transform:rotate(-3deg)}
+.brand-manifesto{max-width:660px;color:#292a27}
+.brand-manifesto p{margin:0 0 20px;font-size:clamp(17px,1.55vw,23px);line-height:1.55;letter-spacing:.015em}
+.brand-cta{width:min(100%,530px);margin-top:10px;padding:20px 30px;border:1px solid #927d66;display:flex;align-items:center;justify-content:space-between;font-size:11px;text-transform:uppercase;letter-spacing:.3em;transition:.3s ease}
+.brand-cta span:last-child{font-size:25px;line-height:0;letter-spacing:0;transition:transform .3s ease}.brand-cta:hover{background:#29261f;color:#fff}.brand-cta:hover span:last-child{transform:translateX(7px)}
+.brand-visual{position:relative;overflow:hidden;min-height:calc(100vh - 72px)}
+.brand-visual img{position:absolute;inset:-5%;width:110%;height:110%;max-width:none;object-fit:cover;object-position:center;transform:translate3d(0,var(--parallax-y,0),0) scale(1.04);will-change:transform}
 .category-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px}
 .category-card{min-height:72vh;padding:36px;display:flex;align-items:end;color:white;position:relative;overflow:hidden;background-position:center;background-size:cover;isolation:isolate}
 .category-card::before{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 40%,rgba(0,0,0,.52));z-index:-1}
@@ -107,7 +109,7 @@ textarea{min-height:120px}
   .site-header{grid-template-columns:1fr auto;padding:15px 18px}
   .site-header nav{display:none}
   .category-grid,.craft,.product-page{grid-template-columns:1fr}
-  .brand-statement{min-height:auto}.brand-statement-inner{position:relative;top:auto;min-height:auto;padding:70px 20px 82px}.brand-stage{grid-template-columns:1fr;gap:66px}.brand-title{font-size:clamp(64px,19vw,132px)}.brand-title-line:last-child{margin-left:0}.brand-manifesto{max-width:650px;padding-left:22px}.brand-title-line,.brand-manifesto{transform:none!important}
+  .brand-statement{min-height:auto}.brand-statement-inner{position:relative;top:auto;min-height:auto;grid-template-columns:1fr}.brand-editorial{padding:76px 7vw 72px}.brand-visual{min-height:68vw}.brand-visual img{inset:0;width:100%;height:100%;transform:none!important}.brand-title>span{font-size:15vw}.brand-title>em{font-size:15vw}.desktop-break{display:none}
   .product-grid{grid-template-columns:1fr 1fr}
   .category-card{min-height:62vh}
   .product-info{position:static}
@@ -118,7 +120,7 @@ textarea{min-height:120px}
 @media(max-width:560px){
   .hero{min-height:78vh;margin:0;border-radius:0;padding:28px 20px;background-image:linear-gradient(180deg,rgba(0,0,0,.03),rgba(0,0,0,.5)),url('/images/home/hero-mobile.webp');background-position:center 30%}
   .section{padding:78px 20px}
-  .brand-kicker span:last-child{display:none}.brand-stage{gap:52px}.brand-title{font-size:18vw;line-height:.78}.brand-title-outline{-webkit-text-stroke:.7px var(--ink)}.brand-manifesto p{font-size:17px}.brand-manifesto strong{font-size:1.55em}.brand-notes{display:grid}
+  .brand-editorial{padding:64px 20px 60px}.brand-kicker{gap:14px;letter-spacing:.3em}.brand-kicker:before,.brand-kicker:after{width:34px}.brand-title{margin-bottom:38px}.brand-title>span{font-size:20vw}.brand-title>em{margin-top:0;font-size:21vw}.brand-manifesto p{font-size:16px}.brand-cta{padding:17px 18px;letter-spacing:.2em}.brand-visual{min-height:92vw}
   .product-grid{gap:12px}
   .product-card h3{font-size:14px}
   .gallery{grid-template-columns:1fr}
