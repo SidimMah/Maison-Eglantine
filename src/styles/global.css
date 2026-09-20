@@ -49,8 +49,10 @@ img{max-width:100%;display:block}
 .brand-manifesto p{margin:0 0 20px;font-size:clamp(17px,1.55vw,23px);line-height:1.55;letter-spacing:.015em}
 .brand-cta{width:min(100%,530px);margin-top:10px;padding:20px 30px;border:1px solid #927d66;display:flex;align-items:center;justify-content:space-between;font-size:11px;text-transform:uppercase;letter-spacing:.3em;transition:.3s ease}
 .brand-cta span:last-child{font-size:25px;line-height:0;letter-spacing:0;transition:transform .3s ease}.brand-cta:hover{background:#29261f;color:#fff}.brand-cta:hover span:last-child{transform:translateX(7px)}
-.brand-visual{position:relative;overflow:hidden;min-height:calc(100vh - 72px)}
+.brand-visual{position:relative;overflow:hidden;min-height:calc(100vh - 72px);background:#f4f0e7}
 .brand-visual img{position:absolute;inset:-5%;width:110%;height:110%;max-width:none;object-fit:cover;object-position:center;transform:translate3d(0,var(--parallax-y,0),0) scale(1.04);will-change:transform}
+.brand-visual-copy{position:absolute;z-index:2;top:50%;right:3.5vw;transform:translateY(-50%);display:grid;gap:24px;color:#75614e;font-size:11px;line-height:1.8;letter-spacing:.38em;text-transform:uppercase}
+.brand-visual-copy i{display:block;width:42px;height:1px;background:#8c755d}
 .category-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px}
 .category-card{min-height:72vh;padding:36px;display:flex;align-items:end;color:white;position:relative;overflow:hidden;background-position:center;background-size:cover;isolation:isolate}
 .category-card::before{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 40%,rgba(0,0,0,.52));z-index:-1}
@@ -109,7 +111,7 @@ textarea{min-height:120px}
   .site-header{grid-template-columns:1fr auto;padding:15px 18px}
   .site-header nav{display:none}
   .category-grid,.craft,.product-page{grid-template-columns:1fr}
-  .brand-statement{min-height:auto}.brand-statement-inner{position:relative;top:auto;min-height:auto;grid-template-columns:1fr}.brand-editorial{padding:76px 7vw 72px}.brand-visual{min-height:68vw}.brand-visual img{inset:0;width:100%;height:100%;transform:none!important}.brand-title>span{font-size:15vw}.brand-title>em{font-size:15vw}.desktop-break{display:none}
+  .brand-statement{min-height:auto}.brand-statement-inner{position:relative;top:auto;min-height:auto;grid-template-columns:1fr}.brand-editorial{padding:76px 7vw 72px}.brand-visual{min-height:68vw}.brand-visual img{inset:0;width:100%;height:100%;transform:none!important}.brand-visual-copy{right:6vw}.brand-title>span{font-size:15vw}.brand-title>em{font-size:15vw}.desktop-break{display:none}
   .product-grid{grid-template-columns:1fr 1fr}
   .category-card{min-height:62vh}
   .product-info{position:static}
@@ -120,7 +122,7 @@ textarea{min-height:120px}
 @media(max-width:560px){
   .hero{min-height:78vh;margin:0;border-radius:0;padding:28px 20px;background-image:linear-gradient(180deg,rgba(0,0,0,.03),rgba(0,0,0,.5)),url('/images/home/hero-mobile.webp');background-position:center 30%}
   .section{padding:78px 20px}
-  .brand-editorial{padding:64px 20px 60px}.brand-kicker{gap:14px;letter-spacing:.3em}.brand-kicker:before,.brand-kicker:after{width:34px}.brand-title{margin-bottom:38px}.brand-title>span{font-size:20vw}.brand-title>em{margin-top:0;font-size:21vw}.brand-manifesto p{font-size:16px}.brand-cta{padding:17px 18px;letter-spacing:.2em}.brand-visual{min-height:92vw}
+  .brand-editorial{padding:64px 20px 60px}.brand-kicker{gap:14px;letter-spacing:.3em}.brand-kicker:before,.brand-kicker:after{width:34px}.brand-title{margin-bottom:38px}.brand-title>span{font-size:20vw}.brand-title>em{margin-top:0;font-size:21vw}.brand-manifesto p{font-size:16px}.brand-cta{padding:17px 18px;letter-spacing:.2em}.brand-visual{min-height:92vw}.brand-visual-copy{right:18px;font-size:9px;gap:16px;letter-spacing:.3em}
   .product-grid{gap:12px}
   .product-card h3{font-size:14px}
   .gallery{grid-template-columns:1fr}
