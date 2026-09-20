@@ -107,10 +107,11 @@ const base = import.meta.env.BASE_URL.endsWith('/')
     function updateParallax() {
       if (!parallaxSection || reduceMotion.matches || window.innerWidth <= 900) return;
       const rect = parallaxSection.getBoundingClientRect();
-      const progress = window.innerHeight - rect.top;
+      const progress = (window.innerHeight / 2) - (rect.top + rect.height / 2);
       parallaxItems.forEach((item) => {
         const speed = Number(item.dataset.speed || 0);
-        item.style.setProperty('--parallax-y', `${progress * speed}px`);
+        const offset = Math.max(-32, Math.min(32, progress * speed));
+        item.style.setProperty('--parallax-y', `${offset}px`);
       });
       ticking = false;
     }
