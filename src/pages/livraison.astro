@@ -1,61 +1,22 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { deliveryTariffs } from '../data/delivery';
-
-const wilayas = [...deliveryTariffs].sort((a, b) =>
-  a.wilaya.localeCompare(b.wilaya, 'fr')
-);
+import { deliveryRates } from '../data/delivery';
 ---
 <BaseLayout title="Livraison & retours — Maison Eglantine">
   <section class="simple-page">
     <div class="eyebrow">Informations</div>
     <h1 class="section-title">Livraison & retours</h1>
-    <p>Maison Eglantine livre dans les 58 wilayas avec paiement en espèces à la livraison.</p>
-    <p>Vous pouvez choisir une livraison <strong>à domicile</strong> ou un retrait en <strong>Stop Desk</strong>. Le tarif est calculé automatiquement selon votre wilaya.</p>
-
-    <div class="delivery-calculator">
-      <div class="eyebrow">Consulter un tarif</div>
-      <label class="field">
-        Wilaya
-        <select id="delivery-wilaya">
-          <option value="">Sélectionner une wilaya</option>
-          {wilayas.map((item) => <option value={item.wilaya}>{item.wilaya}</option>)}
-        </select>
-      </label>
-
-      <div class="delivery-results">
-        <div>
-          <span>À domicile</span>
-          <strong id="home-price">—</strong>
-        </div>
-        <div>
-          <span>Stop Desk</span>
-          <strong id="desk-price">—</strong>
-        </div>
-      </div>
+    <p>Maison Eglantine livre en Algérie avec paiement en espèces à la livraison.</p>
+    <p>Choisissez votre wilaya et le mode de livraison lors de la commande : le montant exact s’ajoute automatiquement au total.</p>
+    <div class="delivery-table-wrap">
+      <table class="delivery-table">
+        <thead><tr><th>Wilaya</th><th>À domicile</th><th>Stop-desk</th></tr></thead>
+        <tbody>{deliveryRates.map(({ wilaya, home, desk }) => <tr><td>{wilaya}</td><td>{home} DA</td><td>{desk} DA</td></tr>)}</tbody>
+      </table>
     </div>
-
     <p>Les modalités détaillées d’échange et de retour seront précisées avant la mise en ligne définitive.</p>
   </section>
-
-  <script define:vars={{ tariffs: deliveryTariffs }}>
-    const select = document.getElementById('delivery-wilaya');
-    const home = document.getElementById('home-price');
-    const desk = document.getElementById('desk-price');
-    const format = (n) => new Intl.NumberFormat('fr-DZ').format(n) + ' DA';
-
-    select.addEventListener('change', () => {
-      const tariff = tariffs.find((item) => item.wilaya === select.value);
-      home.textContent = tariff ? format(tariff.home) : '—';
-      desk.textContent = tariff ? format(tariff.desk) : '—';
-    });
-  </script>
-
   <style>
-    .delivery-calculator{margin:42px 0;padding:28px;background:var(--ivory);max-width:720px}
-    .delivery-calculator .field{margin-top:16px}
-    .delivery-results{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}
-    .delivery-results>div{display:flex;justify-content:space-between;gap:20px;background:white;border:1px solid var(--line);padding:16px}
-    @media(max-width:560px){.delivery-results{grid-template-columns:1fr}}
+    .delivery-table-wrap{overflow-x:auto;margin:32px 0}.delivery-table{width:100%;border-collapse:collapse;min-width:480px;text-align:left}.delivery-table th{font-size:11px;letter-spacing:.12em;text-transform:uppercase}.delivery-table th,.delivery-table td{padding:14px 12px;border-bottom:1px solid var(--line)}.delivery-table td:nth-child(n+2){white-space:nowrap}.delivery-table tr:nth-child(even){background:var(--ivory)}
   </style>
 </BaseLayout>
