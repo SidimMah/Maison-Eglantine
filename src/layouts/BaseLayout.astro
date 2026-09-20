@@ -25,11 +25,32 @@ const base = import.meta.env.BASE_URL.endsWith('/')
         <a href={base + 'pret-a-porter'}>Prêt-à-Porter</a>
         <a href={base + 'traditionnel'}>Traditionnel</a>
       </nav>
-      <a class="cart-link" href={base + 'panier'} aria-label="Panier">Panier <span id="cart-count">0</span></a>
+      <a class="cart-link" href={base + 'panier'} aria-label="Ouvrir le panier" data-cart-toggle>
+        <span class="cart-icon-wrap"><img src={base + 'images/icons/panier.png'} alt="" aria-hidden="true" /></span>
+        <span>Panier</span> <span id="cart-count">0</span>
+      </a>
     </header>
     <main>
       <slot />
     </main>
+    <div class="cart-drawer-backdrop" data-cart-close></div>
+    <aside class="cart-drawer" aria-label="Panier" aria-hidden="true">
+      <div class="cart-drawer-head">
+        <div>
+          <p class="drawer-kicker">Votre sélection</p>
+          <h2>Votre panier</h2>
+        </div>
+        <button class="drawer-close" type="button" data-cart-close aria-label="Fermer le panier">×</button>
+      </div>
+      <div class="cart-drawer-items" data-cart-drawer-items></div>
+      <div class="cart-drawer-empty" data-cart-drawer-empty>Votre panier est encore vide.</div>
+      <div class="cart-drawer-footer">
+        <div class="drawer-subtotal"><span>Sous-total</span><strong data-cart-drawer-total>0 DA</strong></div>
+        <p>Livraison calculée à l’étape suivante.</p>
+        <a class="btn drawer-checkout" href={base + 'commande'}>Passer commande <span aria-hidden="true">⟶</span></a>
+        <a class="drawer-view-cart" href={base + 'panier'}>Voir le panier complet</a>
+      </div>
+    </aside>
     <footer class="site-footer">
       <div class="footer-brand">
         <div class="wordmark footer-wordmark">Maison Eglantine</div>
@@ -62,10 +83,40 @@ const base = import.meta.env.BASE_URL.endsWith('/')
     </footer>
     <script is:inline>
       (() => {
-        const cart = JSON.parse(localStorage.getItem('maison-eglantine-cart') || '[]');
-        const count = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
-        const target = document.getElementById('cart-count');
-        if (target) target.textContent = count;
+        const KEY = 'maison-eglantine-cart';
+        const drawer = document.querySelector('.cart-drawer');
+        const backdrop = document.querySelector('.cart-drawer-backdrop');
+        const items = document.querySelector('[data-cart-drawer-items]');
+        const empty = document.querySelector('[data-cart-drawer-empty]');
+        const total = document.querySelector('[data-cart-drawer-total]');
+        const count = document.getElementById('cart-count');
+        const format = (value) => new Intl.NumberFormat('fr-FR').format(value) + ' DA';
+        const escape = (value = '') => String(value).replace(/[&<>'"]/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));
+        const getCart = () => JSON.parse(localStorage.getItem(KEY) || '[]');
+        const saveCart = (cart) => localStorage.setItem(KEY, JSON.stringify(cart));
+
+        const renderCart = () => {
+          const cart = getCart();
+          const quantity = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
+          if (count) count.textContent = quantity;
+          if (items) items.innerHTML = cart.map((item, index) => `
+            <article class="drawer-item">
+              <div class="drawer-item-media">${item.image ? `<img src="${escape(item.image)}" alt="${escape(item.name)}">` : ''}</div>
+              <div class="drawer-item-copy"><strong>${escape(item.name)}</strong><span>${escape(item.color)} · Taille ${escape(item.size)}</span><span>Qté ${item.quantity}</span><b>${format(item.price * item.quantity)}</b></div>
+              <button type="button" data-drawer-remove="${index}" aria-label="Retirer ${escape(item.name)}">×</button>
+            </article>`).join('');
+          if (empty) empty.hidden = cart.length > 0;
+          if (total) total.textContent = format(cart.reduce((sum, item) => sum + item.price * item.quantity, 0));
+        };
+        const openDrawer = () => { renderCart(); drawer?.classList.add('is-open'); backdrop?.classList.add('is-open'); drawer?.setAttribute('aria-hidden', 'false'); document.body.classList.add('drawer-open'); };
+        const closeDrawer = () => { drawer?.classList.remove('is-open'); backdrop?.classList.remove('is-open'); drawer?.setAttribute('aria-hidden', 'true'); document.body.classList.remove('drawer-open'); };
+        document.querySelector('[data-cart-toggle]')?.addEventListener('click', (event) => { event.preventDefault(); openDrawer(); });
+        document.querySelectorAll('[data-cart-close]').forEach(button => button.addEventListener('click', closeDrawer));
+        items?.addEventListener('click', (event) => { const button = event.target.closest('[data-drawer-remove]'); if (!button) return; const cart = getCart(); cart.splice(Number(button.dataset.drawerRemove), 1); saveCart(cart); renderCart(); window.dispatchEvent(new CustomEvent('maison-eglantine:cart-updated')); });
+        window.addEventListener('maison-eglantine:cart-updated', openDrawer);
+        window.addEventListener('storage', renderCart);
+        window.addEventListener('keydown', event => { if (event.key === 'Escape') closeDrawer(); });
+        renderCart();
       })();
     </script>
   </body>

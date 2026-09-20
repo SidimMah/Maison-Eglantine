@@ -104,7 +104,7 @@ const base = import.meta.env.BASE_URL.endsWith('/')
       });
 
       localStorage.setItem('maison-eglantine-cart', JSON.stringify(cart));
-      window.location.href = base + 'panier';
+      window.dispatchEvent(new CustomEvent('maison-eglantine:cart-updated'));
     });
   </script>
 </BaseLayout>
