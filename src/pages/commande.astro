@@ -12,6 +12,7 @@ const base = import.meta.env.BASE_URL.endsWith('/')
 
     <div style="display:grid;grid-template-columns:1.2fr .8fr;gap:7vw" class="checkout-shell">
       <form id="checkout-form">
+        <p id="checkout-error" class="checkout-error" role="alert" hidden></p>
         <div class="form-grid">
           <label class="field full">Nom et prénom<input name="name" required /></label>
           <label class="field">Téléphone<input name="phone" required inputmode="tel" /></label>
@@ -81,22 +82,51 @@ const base = import.meta.env.BASE_URL.endsWith('/')
     wilayaInput.addEventListener('change', updateDelivery);
     document.querySelectorAll('input[name="delivery-method"]').forEach((input) => input.addEventListener('change', updateDelivery));
 
-    document.getElementById('checkout-form').addEventListener('submit', (e) => {
+    const form = document.getElementById('checkout-form');
+    const errorBox = document.getElementById('checkout-error');
+    form.addEventListener('submit', async (e) => {
       e.preventDefault();
       const method = document.querySelector('input[name="delivery-method"]:checked')?.value;
       const fee = selectedRate && method ? selectedRate[method] : 0;
-      const orderNumber = 'EG-' + String(Date.now()).slice(-6);
+      if (!cart.length || !selectedRate || !method) {
+        errorBox.textContent = 'Merci de vérifier votre panier, votre wilaya et votre mode de livraison.';
+        errorBox.hidden = false;
+        return;
+      }
+      const submitButton = form.querySelector('button[type="submit"]');
+      const data = new FormData(form);
+      errorBox.hidden = true;
+      submitButton.disabled = true;
+      submitButton.textContent = 'Enregistrement…';
+      try {
+        const response = await fetch('/api/orders', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({
+            name: data.get('name'), phone: data.get('phone'), wilaya: data.get('wilaya'), commune: data.get('commune'),
+            address: data.get('address'), note: data.get('note'), deliveryMethod: method, cart
+          })
+        });
+        const order = await response.json();
+        if (!response.ok) throw new Error(order.error || 'La commande n’a pas pu être enregistrée.');
       localStorage.setItem('maison-eglantine-last-order', JSON.stringify({
-        orderNumber, subtotal, cart, deliveryFee: fee, total: subtotal + fee,
+        orderNumber: order.orderNumber, subtotal: order.subtotal, cart, deliveryFee: order.deliveryFee, total: order.total,
         wilaya: wilayaInput.value, deliveryMethod: method === 'desk' ? 'Stop-desk' : 'À domicile'
       }));
       localStorage.removeItem(KEY);
       window.location.href = base + 'confirmation';
+      } catch (error) {
+        errorBox.textContent = error.message || 'La commande n’a pas pu être enregistrée. Réessayez dans un instant.';
+        errorBox.hidden = false;
+        submitButton.disabled = false;
+        submitButton.textContent = 'Confirmer ma commande';
+      }
     });
   </script>
 
   <style>
     .delivery-method{border:0;padding:0}.delivery-method legend{font-size:13px;margin-bottom:10px}.delivery-method label{display:inline-flex;align-items:center;gap:8px;margin:0 22px 0 0;font-size:14px}.delivery-method input{width:auto}
+    .checkout-error{margin:0 0 20px;padding:12px 14px;border:1px solid #b4514b;background:#fff6f4;color:#782d28;font-size:14px}
     @media(max-width:800px){.checkout-shell{grid-template-columns:1fr!important}}
   </style>
 </BaseLayout>

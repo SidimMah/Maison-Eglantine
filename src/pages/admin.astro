@@ -1,0 +1,52 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+<BaseLayout title="Commandes — Maison Eglantine">
+  <section class="admin-page">
+    <div class="admin-head">
+      <div><div class="eyebrow">Espace privé</div><h1 class="section-title">Commandes</h1></div>
+      <button type="button" class="btn" id="refresh-orders">Actualiser</button>
+    </div>
+    <p id="admin-message" class="admin-message">Chargement des commandes…</p>
+    <div id="orders-list" class="orders-list"></div>
+  </section>
+  <script is:inline>
+    const format = (value) => new Intl.NumberFormat('fr-DZ').format(value) + ' DA';
+    const labels = { pending: 'Nouvelle', confirmed: 'Confirmée', prepared: 'Préparée', shipped: 'Expédiée', delivered: 'Livrée', cancelled: 'Annulée' };
+    const escape = (value = '') => String(value).replace(/[&<>'"]/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[char]));
+    const list = document.getElementById('orders-list');
+    const message = document.getElementById('admin-message');
+    async function loadOrders() {
+      message.textContent = 'Chargement des commandes…';
+      try {
+        const response = await fetch('/api/orders', { cache: 'no-store' });
+        if (!response.ok) throw new Error((await response.json()).error || 'Impossible de charger les commandes.');
+        const { orders } = await response.json();
+        message.textContent = orders.length ? `${orders.length} commande${orders.length > 1 ? 's' : ''} affichée${orders.length > 1 ? 's' : ''}.` : 'Aucune commande pour le moment.';
+        list.innerHTML = orders.map(order => {
+          const items = JSON.parse(order.items_json || '[]');
+          const date = new Intl.DateTimeFormat('fr-DZ', { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(`${order.created_at.replace(' ', 'T')}Z`));
+          return `<article class="order-card">
+            <div class="order-card-top"><div><strong>${escape(order.order_number)}</strong><span>${date}</span></div><b>${format(order.total)}</b></div>
+            <div class="order-grid"><div><small>Cliente</small><p>${escape(order.customer_name)}<br><a href="tel:${escape(order.phone)}">${escape(order.phone)}</a></p></div><div><small>Livraison</small><p>${escape(order.delivery_method === 'desk' ? 'Stop-desk' : 'À domicile')} · ${escape(order.wilaya)}<br>${escape(order.commune)}<br>${escape(order.address)}</p></div><div><small>Articles</small><p>${items.map(item => `${escape(item.name)} — ${escape(item.color)}, ${escape(item.size)} × ${item.quantity}`).join('<br>')}</p></div></div>
+            ${order.note ? `<p class="order-note"><small>Remarque</small>${escape(order.note)}</p>` : ''}
+            <div class="order-card-foot"><span>Sous-total ${format(order.subtotal)} · Livraison ${format(order.delivery_fee)}</span><label>Statut <select data-order="${escape(order.order_number)}">${Object.entries(labels).map(([value, label]) => `<option value="${value}" ${value === order.status ? 'selected' : ''}>${label}</option>`).join('')}</select></label></div>
+          </article>`;
+        }).join('');
+      } catch (error) { message.textContent = error.message || 'Impossible de charger les commandes.'; list.innerHTML = ''; }
+    }
+    list.addEventListener('change', async (event) => {
+      const select = event.target.closest('select[data-order]'); if (!select) return;
+      select.disabled = true;
+      try {
+        const response = await fetch('/api/orders/' + encodeURIComponent(select.dataset.order), { method: 'PATCH', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ status: select.value }) });
+        if (!response.ok) throw new Error();
+      } catch { alert('Le statut n’a pas pu être mis à jour.'); await loadOrders(); } finally { select.disabled = false; }
+    });
+    document.getElementById('refresh-orders').addEventListener('click', loadOrders);
+    loadOrders();
+  </script>
+  <style>
+    .admin-page{max-width:1180px;margin:0 auto;padding:clamp(70px,10vw,130px) clamp(20px,5vw,70px)}.admin-head{display:flex;align-items:end;justify-content:space-between;gap:20px;margin-bottom:26px}.admin-message{color:var(--muted);margin-bottom:22px}.orders-list{display:grid;gap:16px}.order-card{border:1px solid var(--line);padding:22px;background:#fff}.order-card-top,.order-card-foot{display:flex;align-items:center;justify-content:space-between;gap:20px}.order-card-top strong{font-size:17px}.order-card-top span{display:block;font-size:12px;color:var(--muted);margin-top:5px}.order-grid{display:grid;grid-template-columns:.8fr 1.25fr 1.4fr;gap:22px;padding:20px 0}.order-grid small,.order-note small{display:block;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);font-size:10px}.order-grid p{margin:7px 0 0;font-size:14px;line-height:1.55}.order-note{border-top:1px solid var(--line);padding-top:14px;font-size:14px;line-height:1.5}.order-card-foot{border-top:1px solid var(--line);padding-top:16px;color:var(--muted);font-size:13px}.order-card-foot label{color:var(--ink);display:flex;align-items:center;gap:8px}.order-card-foot select{width:auto;padding:8px 26px 8px 9px;font-size:13px}@media(max-width:700px){.admin-head,.order-card-top,.order-card-foot{align-items:flex-start;flex-direction:column}.order-grid{grid-template-columns:1fr;gap:14px}.order-card-foot label{width:100%;justify-content:space-between}.order-card-foot select{flex:1;max-width:180px}}
+  </style>
+</BaseLayout>
