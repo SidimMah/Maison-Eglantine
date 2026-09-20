@@ -1,8 +1,14 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { deliveryTariffs } from '../data/delivery';
+
 const base = import.meta.env.BASE_URL.endsWith('/')
   ? import.meta.env.BASE_URL
   : import.meta.env.BASE_URL + '/';
+
+const wilayas = [...deliveryTariffs].sort((a, b) =>
+  a.wilaya.localeCompare(b.wilaya, 'fr')
+);
 ---
 <BaseLayout title="Commander — Maison Eglantine">
   <section class="checkout-page">
@@ -12,24 +18,61 @@ const base = import.meta.env.BASE_URL.endsWith('/')
     <div style="display:grid;grid-template-columns:1.2fr .8fr;gap:7vw" class="checkout-shell">
       <form id="checkout-form">
         <div class="form-grid">
-          <label class="field full">Nom et prénom<input name="name" required /></label>
-          <label class="field">Téléphone<input name="phone" required inputmode="tel" /></label>
+          <label class="field full">Nom et prénom<input name="name" required autocomplete="name" /></label>
+          <label class="field">Téléphone<input name="phone" required inputmode="tel" autocomplete="tel" /></label>
+
           <label class="field">Wilaya
             <select name="wilaya" id="wilaya" required>
-              <option value="">Sélectionner</option>
-              <option value="Oran">Oran</option>
-              <option value="Alger">Alger</option>
-              <option value="Tlemcen">Tlemcen</option>
+              <option value="">Sélectionner une wilaya</option>
+              {wilayas.map((item) => <option value={item.wilaya}>{item.wilaya}</option>)}
             </select>
           </label>
-          <label class="field">Commune<input name="commune" required /></label>
-          <label class="field full">Adresse complète<input name="address" required /></label>
+
+          <fieldset class="field full delivery-fieldset">
+            <legend class="delivery-legend">Mode de livraison</legend>
+            <div class="delivery-methods">
+              <label class="delivery-choice">
+                <input type="radio" name="deliveryMethod" value="home" checked />
+                <span>
+                  <strong>À domicile</strong>
+                  <small>Livraison à votre adresse</small>
+                </span>
+                <strong id="home-method-price" class="delivery-choice-price">—</strong>
+              </label>
+
+              <label class="delivery-choice">
+                <input type="radio" name="deliveryMethod" value="desk" />
+                <span>
+                  <strong>Stop Desk</strong>
+                  <small>Retrait dans une agence / point de retrait</small>
+                </span>
+                <strong id="desk-method-price" class="delivery-choice-price">—</strong>
+              </label>
+            </div>
+          </fieldset>
+
+          <label class="field">Commune<input name="commune" required autocomplete="address-level2" /></label>
+
+          <label class="field full" id="delivery-details-label">
+            <span id="delivery-details-title">Adresse complète</span>
+            <input
+              id="delivery-details"
+              name="deliveryDetails"
+              required
+              autocomplete="street-address"
+              placeholder="Rue, numéro, quartier..."
+            />
+            <small id="delivery-details-help" class="field-help">Indiquez l’adresse où la commande doit être livrée.</small>
+          </label>
+
           <label class="field full">Remarque (facultatif)<textarea name="note"></textarea></label>
         </div>
+
         <label style="display:flex;gap:10px;margin:24px 0;font-size:13px">
           <input type="checkbox" required style="width:auto" />
           <span>Je confirme l’exactitude de mes coordonnées et j’accepte les conditions de vente.</span>
         </label>
+
         <button class="btn btn-dark" type="submit">Confirmer ma commande</button>
       </form>
 
@@ -37,18 +80,28 @@ const base = import.meta.env.BASE_URL.endsWith('/')
         <div class="eyebrow">Récapitulatif</div>
         <div id="checkout-items" style="margin-top:18px"></div>
         <div class="summary-line"><span>Sous-total</span><span id="checkout-subtotal">0 DA</span></div>
-        <div class="summary-line"><span>Livraison</span><span id="delivery-fee">À confirmer</span></div>
+        <div class="summary-line"><span>Livraison</span><span id="delivery-fee">Sélectionnez votre wilaya</span></div>
         <div class="summary-line total"><span>Total</span><span id="checkout-total">0 DA</span></div>
         <p style="font-size:13px;color:var(--muted)">Paiement en espèces à la livraison.</p>
       </aside>
     </div>
   </section>
 
-  <script is:inline>
+  <script define:vars={{ tariffs: deliveryTariffs, base }}>
     const KEY = 'maison-eglantine-cart';
     const format = (n) => new Intl.NumberFormat('fr-DZ').format(n) + ' DA';
     const cart = JSON.parse(localStorage.getItem(KEY) || '[]');
     const subtotal = cart.reduce((s, i) => s + i.price * i.quantity, 0);
+
+    const form = document.getElementById('checkout-form');
+    const wilayaSelect = document.getElementById('wilaya');
+    const deliveryFeeEl = document.getElementById('delivery-fee');
+    const totalEl = document.getElementById('checkout-total');
+    const homePriceEl = document.getElementById('home-method-price');
+    const deskPriceEl = document.getElementById('desk-method-price');
+    const detailsTitle = document.getElementById('delivery-details-title');
+    const detailsInput = document.getElementById('delivery-details');
+    const detailsHelp = document.getElementById('delivery-details-help');
 
     document.getElementById('checkout-items').innerHTML = cart.map(i =>
       `<div style="padding:10px 0;border-bottom:1px solid var(--line)">
@@ -59,18 +112,112 @@ const base = import.meta.env.BASE_URL.endsWith('/')
     ).join('');
 
     document.getElementById('checkout-subtotal').textContent = format(subtotal);
-    document.getElementById('checkout-total').textContent = format(subtotal);
+    totalEl.textContent = format(subtotal);
 
-    document.getElementById('checkout-form').addEventListener('submit', (e) => {
+    const selectedMethod = () =>
+      document.querySelector('input[name="deliveryMethod"]:checked')?.value || 'home';
+
+    const selectedTariff = () =>
+      tariffs.find((item) => item.wilaya === wilayaSelect.value);
+
+    const updateDeliveryDetailsField = () => {
+      if (selectedMethod() === 'desk') {
+        detailsTitle.textContent = 'Stop Desk / agence souhaitée';
+        detailsInput.placeholder = 'Nom de l’agence ou du point de retrait';
+        detailsInput.autocomplete = 'off';
+        detailsHelp.textContent = 'Indiquez le Stop Desk souhaité si vous le connaissez.';
+      } else {
+        detailsTitle.textContent = 'Adresse complète';
+        detailsInput.placeholder = 'Rue, numéro, quartier...';
+        detailsInput.autocomplete = 'street-address';
+        detailsHelp.textContent = 'Indiquez l’adresse où la commande doit être livrée.';
+      }
+    };
+
+    const updateDeliveryPrice = () => {
+      const tariff = selectedTariff();
+
+      if (!tariff) {
+        homePriceEl.textContent = '—';
+        deskPriceEl.textContent = '—';
+        deliveryFeeEl.textContent = 'Sélectionnez votre wilaya';
+        totalEl.textContent = format(subtotal);
+        return;
+      }
+
+      homePriceEl.textContent = format(tariff.home);
+      deskPriceEl.textContent = format(tariff.desk);
+
+      const fee = selectedMethod() === 'desk' ? tariff.desk : tariff.home;
+      deliveryFeeEl.textContent = format(fee);
+      totalEl.textContent = format(subtotal + fee);
+    };
+
+    wilayaSelect.addEventListener('change', updateDeliveryPrice);
+
+    document.querySelectorAll('input[name="deliveryMethod"]').forEach((radio) => {
+      radio.addEventListener('change', () => {
+        updateDeliveryDetailsField();
+        updateDeliveryPrice();
+      });
+    });
+
+    updateDeliveryDetailsField();
+    updateDeliveryPrice();
+
+    form.addEventListener('submit', (e) => {
       e.preventDefault();
+
+      if (!cart.length) {
+        window.location.href = base + 'panier';
+        return;
+      }
+
+      const tariff = selectedTariff();
+      if (!tariff) return;
+
+      const formData = new FormData(form);
+      const deliveryMethod = selectedMethod();
+      const deliveryFee = deliveryMethod === 'desk' ? tariff.desk : tariff.home;
+      const total = subtotal + deliveryFee;
       const orderNumber = 'EG-' + String(Date.now()).slice(-6);
-      localStorage.setItem('maison-eglantine-last-order', JSON.stringify({orderNumber, subtotal, cart}));
+
+      const customer = {
+        name: formData.get('name'),
+        phone: formData.get('phone'),
+        wilaya: formData.get('wilaya'),
+        commune: formData.get('commune'),
+        deliveryDetails: formData.get('deliveryDetails'),
+        note: formData.get('note')
+      };
+
+      localStorage.setItem('maison-eglantine-last-order', JSON.stringify({
+        orderNumber,
+        subtotal,
+        deliveryMethod,
+        deliveryFee,
+        total,
+        customer,
+        cart
+      }));
+
       localStorage.removeItem(KEY);
       window.location.href = base + 'confirmation';
     });
   </script>
 
   <style>
-    @media(max-width:800px){.checkout-shell{grid-template-columns:1fr!important}}
+    .delivery-fieldset{border:0;padding:0;margin:0}
+    .delivery-legend{margin-bottom:8px}
+    .delivery-methods{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .delivery-choice{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;border:1px solid var(--line);padding:14px;background:white;cursor:pointer}
+    .delivery-choice input{width:auto}
+    .delivery-choice span{display:grid;gap:3px}
+    .delivery-choice small,.field-help{color:var(--muted);font-size:12px}
+    .delivery-choice-price{font-size:13px;white-space:nowrap}
+    @media(max-width:800px){
+      .checkout-shell{grid-template-columns:1fr!important}
+      .delivery-methods{grid-template-columns:1fr}
+    }
   </style>
 </BaseLayout>
