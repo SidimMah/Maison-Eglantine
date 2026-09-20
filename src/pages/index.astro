@@ -16,10 +16,26 @@ const base = import.meta.env.BASE_URL.endsWith('/')
     </div>
   </section>
 
-  <section id="eglantine" class="section brand-statement">
-    <h2 class="display reveal">MAISON EGLANTINE</h2>
-    <div class="brand-copy reveal">
-      <p class="brand-intro">Eglantine est une jeune marque algérienne qui n’a qu’une seule obsession : créer du beau et créer algérien. Laissez-vous charmer par nos collections, qui sublimeront chaque journée de votre quotidien.</p>
+  <section id="eglantine" class="brand-statement">
+    <div class="brand-statement-inner">
+      <div class="brand-kicker reveal">
+        <span>Notre manifeste</span>
+        <span>Oran · Algérie</span>
+      </div>
+      <div class="brand-stage">
+        <h2 class="brand-title" aria-label="Maison Eglantine">
+          <span class="brand-title-line" data-parallax data-speed="-0.055">Maison</span>
+          <span class="brand-title-line brand-title-outline" data-parallax data-speed="0.045">Eglantine</span>
+        </h2>
+        <div class="brand-manifesto reveal" data-parallax data-speed="0.025">
+          <p><strong>Eglantine est une jeune marque algérienne</strong> qui n’a qu’une seule obsession : créer du beau et créer algérien. Laissez-vous charmer par nos collections, qui sublimeront chaque journée de votre quotidien.</p>
+          <div class="brand-notes">
+            <span>Création algérienne</span>
+            <span>Confection soignée</span>
+            <span>Élégance quotidienne</span>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -82,5 +98,29 @@ const base = import.meta.env.BASE_URL.endsWith('/')
       });
     }, { threshold: .15 });
     document.querySelectorAll('.reveal').forEach((el) => observer.observe(el));
+
+    const parallaxSection = document.querySelector('.brand-statement');
+    const parallaxItems = document.querySelectorAll('[data-parallax]');
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    let ticking = false;
+
+    function updateParallax() {
+      if (!parallaxSection || reduceMotion.matches || window.innerWidth <= 900) return;
+      const rect = parallaxSection.getBoundingClientRect();
+      const progress = window.innerHeight - rect.top;
+      parallaxItems.forEach((item) => {
+        const speed = Number(item.dataset.speed || 0);
+        item.style.setProperty('--parallax-y', `${progress * speed}px`);
+      });
+      ticking = false;
+    }
+
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        requestAnimationFrame(updateParallax);
+        ticking = true;
+      }
+    }, { passive: true });
+    updateParallax();
   </script>
 </BaseLayout>
