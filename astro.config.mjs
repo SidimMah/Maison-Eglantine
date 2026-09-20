@@ -1,6 +1,6 @@
 import { defineConfig } from 'astro/config';
 
 export default defineConfig({
-  site: 'https://sidimmah.github.io',
-  base: '/Maison-Eglantine'
+  site: 'https://www.maison-eglantine.com',
+  base: '/'
 });
