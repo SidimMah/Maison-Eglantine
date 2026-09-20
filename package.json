@@ -7,9 +7,14 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "deploy": "npm run build && wrangler deploy",
+    "db:migrate": "wrangler d1 migrations apply maison-eglantine-orders --remote"
   },
   "dependencies": {
     "astro": "latest"
+  },
+  "devDependencies": {
+    "wrangler": "^4.135.0"
   }
 }

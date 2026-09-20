@@ -1,0 +1,18 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "maison-eglantine",
+  "main": "src/worker.ts",
+  "compatibility_date": "2026-09-20",
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS",
+    "run_worker_first": ["/api/*", "/admin/*"]
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "maison-eglantine-orders",
+      "database_id": "f1d96a2a-5130-4a21-ab84-a276dc67c0de"
+    }
+  ]
+}
