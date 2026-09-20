@@ -1,9 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { deliveryRates } from '../data/delivery';
-const base = import.meta.env.BASE_URL.endsWith('/')
-  ? import.meta.env.BASE_URL
-  : import.meta.env.BASE_URL + '/';
 ---
 <BaseLayout title="Commander — Maison Eglantine">
   <section class="checkout-page">
@@ -114,7 +111,7 @@ const base = import.meta.env.BASE_URL.endsWith('/')
         wilaya: wilayaInput.value, deliveryMethod: method === 'desk' ? 'Stop-desk' : 'À domicile'
       }));
       localStorage.removeItem(KEY);
-      window.location.href = base + 'confirmation';
+      window.location.href = '/confirmation';
       } catch (error) {
         errorBox.textContent = error.message || 'La commande n’a pas pu être enregistrée. Réessayez dans un instant.';
         errorBox.hidden = false;
