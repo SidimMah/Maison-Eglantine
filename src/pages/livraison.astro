@@ -1,12 +1,61 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { deliveryTariffs } from '../data/delivery';
+
+const wilayas = [...deliveryTariffs].sort((a, b) =>
+  a.wilaya.localeCompare(b.wilaya, 'fr')
+);
 ---
 <BaseLayout title="Livraison & retours — Maison Eglantine">
   <section class="simple-page">
     <div class="eyebrow">Informations</div>
     <h1 class="section-title">Livraison & retours</h1>
-    <p>Maison Eglantine livre en Algérie avec paiement en espèces à la livraison.</p>
-    <p>Les frais de livraison varient selon la wilaya et seront affichés avant la validation définitive de la commande.</p>
+    <p>Maison Eglantine livre dans les 58 wilayas avec paiement en espèces à la livraison.</p>
+    <p>Vous pouvez choisir une livraison <strong>à domicile</strong> ou un retrait en <strong>Stop Desk</strong>. Le tarif est calculé automatiquement selon votre wilaya.</p>
+
+    <div class="delivery-calculator">
+      <div class="eyebrow">Consulter un tarif</div>
+      <label class="field">
+        Wilaya
+        <select id="delivery-wilaya">
+          <option value="">Sélectionner une wilaya</option>
+          {wilayas.map((item) => <option value={item.wilaya}>{item.wilaya}</option>)}
+        </select>
+      </label>
+
+      <div class="delivery-results">
+        <div>
+          <span>À domicile</span>
+          <strong id="home-price">—</strong>
+        </div>
+        <div>
+          <span>Stop Desk</span>
+          <strong id="desk-price">—</strong>
+        </div>
+      </div>
+    </div>
+
     <p>Les modalités détaillées d’échange et de retour seront précisées avant la mise en ligne définitive.</p>
   </section>
+
+  <script define:vars={{ tariffs: deliveryTariffs }}>
+    const select = document.getElementById('delivery-wilaya');
+    const home = document.getElementById('home-price');
+    const desk = document.getElementById('desk-price');
+    const format = (n) => new Intl.NumberFormat('fr-DZ').format(n) + ' DA';
+
+    select.addEventListener('change', () => {
+      const tariff = tariffs.find((item) => item.wilaya === select.value);
+      home.textContent = tariff ? format(tariff.home) : '—';
+      desk.textContent = tariff ? format(tariff.desk) : '—';
+    });
+  </script>
+
+  <style>
+    .delivery-calculator{margin:42px 0;padding:28px;background:var(--ivory);max-width:720px}
+    .delivery-calculator .field{margin-top:16px}
+    .delivery-results{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}
+    .delivery-results>div{display:flex;justify-content:space-between;gap:20px;background:white;border:1px solid var(--line);padding:16px}
+    @media(max-width:560px){.delivery-results{grid-template-columns:1fr}}
+  </style>
 </BaseLayout>
