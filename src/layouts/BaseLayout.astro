@@ -2,11 +2,16 @@
 import '../styles/global.css';
 const {
   title = 'Maison Eglantine',
-  description = 'Maison Eglantine — confection artisanale en Algérie.'
+  description = 'Maison Eglantine — confection artisanale de vêtements féminins en Algérie.',
+  noindex = false,
+  image = '/images/home/hero-desktop.webp',
+  structuredData
 } = Astro.props;
 const base = import.meta.env.BASE_URL.endsWith('/')
   ? import.meta.env.BASE_URL
   : import.meta.env.BASE_URL + '/';
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const socialImage = new URL(image, Astro.site).href;
 ---
 <!doctype html>
 <html lang="fr">
@@ -14,6 +19,20 @@ const base = import.meta.env.BASE_URL.endsWith('/')
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
     <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+    <meta property="og:locale" content="fr_DZ" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Maison Eglantine" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={socialImage} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={socialImage} />
+    {structuredData && <script type="application/ld+json" set:html={JSON.stringify(structuredData)} />}
     <title>{title}</title>
   </head>
   <body>
