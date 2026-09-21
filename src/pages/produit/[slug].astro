@@ -118,6 +118,137 @@ const productSchema = {
       </div>
 
       <div class="option-group">
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { assetUrl, products, formatPrice } from '../../data/products';
+
+export function getStaticPaths() {
+  return products.map((product) => ({
+    params: { slug: product.slug },
+    props: { product }
+  }));
+}
+
+const { product } = Astro.props;
+const initialColor = product.colors[0];
+const initialImages = product.images[initialColor] ?? [product.cover];
+const base = import.meta.env.BASE_URL.endsWith('/')
+  ? import.meta.env.BASE_URL
+  : import.meta.env.BASE_URL + '/';
+const productSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Product',
+  name: product.name,
+  description: product.description,
+  image: initialImages.map((image) => new URL(assetUrl(image), Astro.site).href),
+  brand: { '@type': 'Brand', name: 'Maison Eglantine' },
+  offers: {
+    '@type': 'Offer',
+    url: new URL(Astro.url.pathname, Astro.site).href,
+    priceCurrency: 'DZD',
+    price: product.price,
+    availability: 'https://schema.org/InStock',
+    itemCondition: 'https://schema.org/NewCondition'
+  }
+};
+---
+<BaseLayout
+  title={product.name + ' | Maison Eglantine'}
+  description={product.description}
+  image={product.cover}
+  structuredData={productSchema}
+>
+  <section class="product-page">
+    <div class="gallery" id="product-gallery">
+      {initialImages.map((src, index) => (
+        <figure class="shot">
+          <img src={assetUrl(src)} alt={product.name + ' — ' + initialColor + ' — vue ' + (index + 1)} loading={index < 2 ? 'eager' : 'lazy'} />
+        </figure>
+      ))}
+    </div>
+
+    <aside class="product-info">
+      <div class="eyebrow">{product.category === 'traditionnel' ? 'Traditionnel' : 'Prêt-à-Porter'}</div>
+      <h1>{product.name}</h1>
+      <div class="price" style="font-size:18px;color:var(--ink)">{formatPrice(product.price)}</div>
+      <p class="product-description">{product.description}</p>
+
+      <div class="option-group">
+        <div class="eyebrow" style="margin-bottom:10px">Couleur</div>
+        <div class="option-row" data-color-options>
+          {product.colors.map((color, index) => (
+            <button class:list={['option', {active:index === 0}]} type="button" data-value={color}>{color}</button>
+          ))}
+        </div>
+      </div>
+
+      <div class="option-group">
+        <div class="eyebrow" style="margin-bottom:10px">Taille</div>
+        <div class="option-row" data-size-options>
+          {product.sizes.map((size, index) => (
+            <button class:list={['option', {active:index === 0}]} type="button" data-value={size}>{size}</button>
+          ))}
+        </div>
+      </div>
+
+      <div class="option-group">
+        <label class="eyebrow" for="quantity" style="display:block;margin-bottom:10px">Quantité</label>
+        <input id="quantity" type="number" min="1" value="1" style="max-width:100px" />
+      </div>
+
+      <button id="add-to-cart" class="btn btn-dark" style="width:100%">Ajouter au panier</button>
+      <div class="product-reassurance">
+        <span>Paiement à la livraison</span>
+        <span>Confectionné en Algérie</span>
+        <span>Besoin d’aide ? Écrivez-nous</span>
+      </div>
+    </aside>
+  </section>
+
+  <script define:vars={{ product, base }}>
+    const gallery = document.getElementById('product-gallery');
+    const colorButtons = [...document.querySelectorAll('[data-color-options] .option')];
+    const sizeButtons = [...document.querySelectorAll('[data-size-options] .option')];
+
+    const activate = (buttons, target) => {
+      buttons.forEach((btn) => btn.classList.toggle('active', btn === target));
+    };
+
+    const renderGallery = (color) => {
+      const images = product.images[color] || [product.cover];
+      gallery.innerHTML = images.map((src, index) =>
+        '<figure class="shot"><img src="' + base + src.slice(1) + '" alt="' + product.name + ' — ' + color + ' — vue ' + (index + 1) + '" loading="lazy"></figure>'
+      ).join('');
+    };
+
+    colorButtons.forEach((btn) => btn.addEventListener('click', () => {
+      activate(colorButtons, btn);
+      renderGallery(btn.dataset.value);
+    }));
+
+    sizeButtons.forEach((btn) => btn.addEventListener('click', () => activate(sizeButtons, btn)));
+
+    document.getElementById('add-to-cart')?.addEventListener('click', () => {
+      const color = document.querySelector('[data-color-options] .active')?.dataset.value;
+      const size = document.querySelector('[data-size-options] .active')?.dataset.value;
+      const quantity = Math.max(1, Number(document.getElementById('quantity')?.value || 1));
+      const cart = JSON.parse(localStorage.getItem('maison-eglantine-cart') || '[]');
+
+      cart.push({
+        slug: product.slug,
+        name: product.name,
+        price: product.price,
+        image: base + (product.images[color] || [product.cover])[0].slice(1),
+        color,
+        size,
+        quantity
+      });
+
+      localStorage.setItem('maison-eglantine-cart', JSON.stringify(cart));
+      window.dispatchEvent(new CustomEvent('maison-eglantine:cart-updated'));
+    });
+  </script>
+</BaseLayout>
         <div class="eyebrow" style="margin-bottom:10px">Taille</div>
         <div class="option-row" data-size-options>
           {product.sizes.map((size, index) => (
