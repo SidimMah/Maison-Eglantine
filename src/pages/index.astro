@@ -6,7 +6,17 @@ const base = import.meta.env.BASE_URL.endsWith('/')
   ? import.meta.env.BASE_URL
   : import.meta.env.BASE_URL + '/';
 ---
-<BaseLayout title="Maison Eglantine — Élégance artisanale">
+<BaseLayout
+  title="Maison Eglantine | Vêtements féminins faits en Algérie"
+  description="Maison Eglantine, marque algérienne de vêtements féminins : caftans, tenues traditionnelles et prêt-à-porter, confectionnés avec soin en Algérie."
+  structuredData={{
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: 'Maison Eglantine',
+    url: 'https://www.maison-eglantine.com/',
+    inLanguage: 'fr-DZ'
+  }}
+>
   <section class="hero">
     <div class="hero-inner reveal">
       <div class="eyebrow" style="color:#fff">Maison Eglantine</div>
