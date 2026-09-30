@@ -1,22 +1,32 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import ProductCard from '../components/ProductCard.astro';
-import { products } from '../data/products';
-const items = products.filter((p) => p.category === 'pret-a-porter');
+import { products, assetUrl, formatPrice } from '../data/products';
+const product = products.find((p) => p.slug === 'summer-elegance')!;
+const colors = ['Fuchsia', 'Noir', 'Orange'];
+const base = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : import.meta.env.BASE_URL + '/';
 ---
 <BaseLayout title="Prêt-à-Porter — Maison Eglantine">
-  <section class="collection-hero">
-    <div class="collection-hero-copy">
-      <div class="eyebrow">Maison Eglantine · Collection</div>
-      <h1>Prêt-à-Porter</h1>
-      <p>Des pièces fluides et élégantes, pensées pour accompagner le quotidien.</p>
+  <section class="summer-collection">
+    <header class="summer-heading">
+      <div class="eyebrow">Maison Eglantine · Prêt-à-Porter</div>
+      <h1>Summer Elegance</h1>
+      <p>Une robe fluide. Trois couleurs. Votre allure.</p>
+    </header>
+    <div class="summer-colors">
+      {colors.map((color) => (
+        <a class:list={['summer-look', { 'summer-look-main': color === 'Noir' }]} href={base + 'produit/' + product.slug + '?couleur=' + encodeURIComponent(color)}>
+          <div class="summer-image">
+            <img src={assetUrl(product.images[color][0])} alt={'Summer Elegance — ' + color} loading="eager" />
+          </div>
+          <span class="summer-color"><i class:list={['color-dot', color.toLowerCase()]} aria-hidden="true"></i>{color}<span aria-hidden="true">⟶</span></span>
+        </a>
+      ))}
     </div>
-    <div class="collection-meta"><span>{items.length} créations</span><span>Petites séries</span></div>
-  </section>
-  <section class="collection-grid">
-    <div class="collection-intro"><p>Le confort d’une coupe juste, l’allure d’une pièce que l’on garde longtemps.</p></div>
-    <div class="product-grid">
-      {items.map((product) => <ProductCard product={product} />)}
+    <div class="summer-details">
+      <div class="price">{formatPrice(product.price)}</div>
+      <p>Robe-chemise légère, ceinture ajustable et coupe décontractée.</p>
+      <span class="summer-sizes">Tailles S · M · L</span>
+      <a class="btn btn-dark" href={base + 'produit/' + product.slug + '?couleur=Noir'}>Découvrir la robe</a>
     </div>
   </section>
 </BaseLayout>

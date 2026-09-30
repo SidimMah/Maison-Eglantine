@@ -1,5 +1,7 @@
 ---
 import '../styles/global.css';
+import { products } from '../data/products';
+const catalogPrices = Object.fromEntries(products.map(({ slug, price }) => [slug, price]));
 const {
   title = 'Maison Eglantine',
   description = 'Maison Eglantine — confection artisanale de vêtements féminins en Algérie.',
@@ -34,6 +36,19 @@ const socialImage = new URL(image, Astro.site).href;
     <meta name="twitter:image" content={socialImage} />
     {structuredData && <script type="application/ld+json" set:html={JSON.stringify(structuredData)} />}
     <title>{title}</title>
+    <script define:vars={{ catalogPrices }}>
+      // Refresh previously saved carts before any page renders its totals.
+      try {
+        const key = 'maison-eglantine-cart';
+        const saved = localStorage.getItem(key);
+        if (saved) {
+          const cart = JSON.parse(saved);
+          if (Array.isArray(cart)) localStorage.setItem(key, JSON.stringify(cart.map(item =>
+            catalogPrices[item.slug] !== undefined ? { ...item, price: catalogPrices[item.slug] } : item
+          )));
+        }
+      } catch { /* Storage may be unavailable in private browsing. */ }
+    </script>
   </head>
   <body>
     <header class="site-header">

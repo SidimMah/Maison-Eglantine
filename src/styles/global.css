@@ -135,3 +135,36 @@ textarea{min-height:120px}
   .cart-details>strong{font-size:19px}.cart-actions{gap:10px}
   .site-footer{grid-template-columns:1fr;padding:56px 20px 20px;gap:34px}.footer-brand{grid-column:auto}.footer-bottom{grid-column:auto;display:grid;gap:8px;margin-top:0}.footer-links{gap:9px}
 }
+
+/* Six existing pieces and variants in a continuous selection. */
+.selection-section{--selection-gap:18px;--selection-width:calc((88vw - 5 * var(--selection-gap)) / 6);overflow:hidden}
+.selection-heading{display:flex;justify-content:space-between;align-items:center;gap:20px}
+.selection-pause{font:inherit;font-size:12px;color:var(--muted);border:0;border-bottom:1px solid var(--line);background:transparent;padding:8px 0;cursor:pointer;white-space:nowrap}
+.selection-window{overflow:hidden;padding:24px 0 18px;margin-top:-10px}
+.selection-track{display:flex;width:max-content;animation:selection-scroll 42s linear infinite}
+.selection-group{display:flex;gap:var(--selection-gap);padding-right:var(--selection-gap)}
+.selection-group .product-card{width:var(--selection-width);flex-shrink:0;transition:transform .35s ease;transform-origin:center}
+.selection-group .product-card:hover,.selection-group .product-card:focus-visible{transform:scale(1.07);position:relative;z-index:1}
+.selection-window:hover .selection-track,.selection-window:focus-within .selection-track,.selection-section.is-paused .selection-track{animation-play-state:paused}
+.product-color{font-size:12px;color:var(--muted);margin-bottom:7px}
+@keyframes selection-scroll{to{transform:translateX(-50%)}}
+.summer-collection{max-width:1360px;margin:auto;padding:42px 6vw 90px}
+.summer-heading{text-align:center;margin-bottom:30px}
+.summer-heading h1{font-family:'Bodoni Moda',serif;font-size:clamp(34px,4.2vw,60px);font-weight:500;letter-spacing:-.04em;line-height:1.1;margin:13px 0 10px}
+.summer-heading p{font-size:14px;color:var(--muted);margin:0}
+.summer-colors{display:grid;grid-template-columns:1fr 1.1fr 1fr;gap:24px;align-items:center;max-width:1040px;margin:auto}
+.summer-look{display:block}
+.summer-image{aspect-ratio:3/4;overflow:hidden;background:var(--ivory)}
+.summer-image img{width:100%;height:100%;object-fit:cover;transition:transform .5s ease}
+.summer-look:hover img{transform:scale(1.035)}
+.summer-color{display:flex;align-items:center;gap:8px;padding:13px 0;font-size:13px}
+.summer-color>span{margin-left:auto}
+.color-dot{width:9px;height:9px;border-radius:50%;background:#c2367a}.color-dot.noir{background:#242323}.color-dot.orange{background:#d98433}
+.summer-details{text-align:center;margin:25px auto 0;max-width:470px;display:grid;justify-items:center;gap:12px}
+.summer-details .price{color:var(--ink);font-size:20px}
+.summer-details p{margin:0;font-size:13px;color:var(--muted);line-height:1.6}
+.summer-sizes{font-size:11px;letter-spacing:.12em;color:var(--muted)}
+.summer-details .btn{margin-top:7px}
+@media(max-width:900px){.selection-section{--selection-width:calc((88vw - 2 * var(--selection-gap)) / 3)}.summer-colors{gap:14px}}
+@media(max-width:600px){.selection-section{--selection-gap:14px;--selection-width:calc((100vw - 54px) / 2)}.selection-heading{align-items:flex-start}.selection-heading .section-intro{font-size:13px}.selection-pause{font-size:10px;margin-top:5px}.summer-collection{padding:35px 16px 65px}.summer-colors{gap:8px;grid-template-columns:1fr 1.1fr 1fr}.summer-heading{margin-bottom:25px}.summer-heading p{font-size:12px}.summer-color{font-size:11px;gap:5px}.summer-color>span{display:none}.summer-details{margin-top:22px}}
+@media(prefers-reduced-motion:reduce){.selection-track{animation:none}.selection-copy{display:none}.selection-window{overflow-x:auto}.selection-pause{display:none}.selection-group .product-card,.summer-image img{transition:none}.selection-group .product-card:hover,.selection-group .product-card:focus-visible{transform:none}}

@@ -2,6 +2,14 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ProductCard from '../components/ProductCard.astro';
 import { products } from '../data/products';
+const selection = [
+  { product: products[0], color: 'Vert Bouteille' },
+  { product: products[1], color: 'Noir' },
+  { product: products[2], color: 'Gris' },
+  { product: products[3], color: 'Fuchsia' },
+  { product: products[0], color: 'Bleu Nuit' },
+  { product: products[2], color: 'Noir' }
+];
 const base = import.meta.env.BASE_URL.endsWith('/')
   ? import.meta.env.BASE_URL
   : import.meta.env.BASE_URL + '/';
@@ -23,6 +31,27 @@ const base = import.meta.env.BASE_URL.endsWith('/')
       <h1>L’élégance, autrement.</h1>
       <p>Entre héritage et modernité. Des pièces pensées et confectionnées avec soin en Algérie.</p>
       <a class="btn hero-btn" href="#collections">Découvrir la collection</a>
+    </div>
+  </section>
+
+  <section class="section selection-section" aria-labelledby="selection-title">
+    <div class="selection-heading">
+      <div>
+        <div class="eyebrow">La sélection</div>
+        <h2 class="section-title" id="selection-title">Nos pièces</h2>
+        <p class="section-intro">Une sélection pensée et confectionnée avec soin.</p>
+      </div>
+      <button class="selection-pause" type="button" aria-pressed="false">Mettre en pause</button>
+    </div>
+    <div class="selection-window">
+      <div class="selection-track">
+        <div class="selection-group">
+          {selection.map(({ product, color }) => <ProductCard product={product} color={color} />)}
+        </div>
+        <div class="selection-group selection-copy" aria-hidden="true">
+          {selection.map(({ product, color }) => <ProductCard product={product} color={color} duplicate />)}
+        </div>
+      </div>
     </div>
   </section>
 
@@ -74,14 +103,6 @@ const base = import.meta.env.BASE_URL.endsWith('/')
     </div>
   </section>
 
-  <section class="section">
-    <div class="eyebrow">La sélection</div>
-    <h2 class="section-title">Nos pièces</h2>
-    <p class="section-intro">Une sélection pensée et confectionnée avec soin.</p>
-    <div class="product-grid">
-      {products.map((product) => <ProductCard product={product} />)}
-    </div>
-  </section>
 
   <section class="section craft">
     <div class="craft-media">
@@ -107,6 +128,13 @@ const base = import.meta.env.BASE_URL.endsWith('/')
   </section>
 
   <script is:inline>
+    const selectionSection = document.querySelector('.selection-section');
+    const pauseButton = document.querySelector('.selection-pause');
+    pauseButton?.addEventListener('click', () => {
+      const paused = selectionSection.classList.toggle('is-paused');
+      pauseButton.setAttribute('aria-pressed', String(paused));
+      pauseButton.textContent = paused ? 'Reprendre le défilement' : 'Mettre en pause';
+    });
     const observer = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) entry.target.classList.add('is-visible');

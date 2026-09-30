@@ -1,14 +1,16 @@
 ---
 import { assetUrl, formatPrice } from '../data/products';
-const { product } = Astro.props;
+const { product, color, duplicate = false } = Astro.props;
+const cover = color ? product.images[color]?.[0] || product.cover : product.cover;
 const base = import.meta.env.BASE_URL.endsWith('/')
   ? import.meta.env.BASE_URL
   : import.meta.env.BASE_URL + '/';
 ---
-<a class="product-card" href={base + 'produit/' + product.slug}>
+<a class="product-card" tabindex={duplicate ? -1 : undefined} href={base + 'produit/' + product.slug + (color ? '?couleur=' + encodeURIComponent(color) : '')}>
   <div class="product-image">
-    <img src={assetUrl(product.cover)} alt={product.name} loading="lazy" />
+    <img src={assetUrl(cover)} alt={product.name + (color ? ' — ' + color : '')} loading="lazy" />
   </div>
   <h3>{product.name}</h3>
+  {color && <div class="product-color">{color}</div>}
   <div class="price">{formatPrice(product.price)}</div>
 </a>

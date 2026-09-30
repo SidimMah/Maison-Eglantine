@@ -17,9 +17,9 @@ interface Env {
 }
 
 const products = {
-  'caftan-alaline': { name: 'Caftan Alaline', price: 29500, colors: ['Vert Bouteille', 'Bleu Nuit'], sizes: ['S', 'M', 'L'] },
-  'lady-andalous': { name: 'Lady Andalous', price: 25000, colors: ['Noir'], sizes: ['S', 'M', 'L'] },
-  kemkha: { name: 'Kemkha', price: 12000, colors: ['Vert', 'Gris', 'Noir'], sizes: ['S', 'M', 'L'] },
+  'caftan-alaline': { name: 'Caftan Alaline', price: 22000, colors: ['Vert Bouteille', 'Bleu Nuit'], sizes: ['S', 'M', 'L'] },
+  'lady-andalous': { name: 'Lady Andalous', price: 19000, colors: ['Noir'], sizes: ['S', 'M', 'L'] },
+  kemkha: { name: 'Kemkha', price: 16000, colors: ['Vert', 'Gris', 'Noir'], sizes: ['S', 'M', 'L'] },
   'summer-elegance': { name: 'Summer Elegance', price: 2800, colors: ['Noir', 'Fuchsia', 'Orange'], sizes: ['S', 'M', 'L'] },
 } as const;
 

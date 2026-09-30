@@ -101,6 +101,10 @@ const productSchema = {
       ).join('');
     };
 
+    const requestedColor = new URLSearchParams(window.location.search).get('couleur');
+    const requestedButton = colorButtons.find((btn) => btn.dataset.value === requestedColor);
+    if (requestedButton) { activate(colorButtons, requestedButton); renderGallery(requestedColor); }
+
     colorButtons.forEach((btn) => btn.addEventListener('click', () => {
       activate(colorButtons, btn);
       renderGallery(btn.dataset.value);
