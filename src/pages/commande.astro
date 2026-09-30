@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { deliveryRates } from '../data/delivery';
+import { agencies } from '../data/agencies';
 ---
 <BaseLayout title="Commander — Maison Eglantine">
   <section class="checkout-page">
@@ -24,8 +25,13 @@ import { deliveryRates } from '../data/delivery';
               {deliveryRates.map(({ wilaya }) => <option value={wilaya}>{wilaya}</option>)}
             </select>
           </label>
-          <label class="field">Commune<input name="commune" required /></label>
-          <label class="field full">Adresse complète<input name="address" required /></label>
+          <label class="field full" id="agency-field" hidden>Agence
+            <select name="agencyId" id="agency" disabled aria-describedby="agency-help">
+              <option value="">Choisissez d’abord votre wilaya</option>
+            </select>
+            <span id="agency-help" class="agency-help" aria-live="polite"></span>
+          </label>
+          <label class="field full" id="address-field">Adresse complète<input name="address" id="address" required /></label>
           <label class="field full">Remarque (facultatif)<textarea name="note"></textarea></label>
         </div>
         <label style="display:flex;gap:10px;margin:24px 0;font-size:13px">
@@ -46,7 +52,7 @@ import { deliveryRates } from '../data/delivery';
     </div>
   </section>
 
-  <script define:vars={{ deliveryRates }}>
+  <script define:vars={{ deliveryRates, agencies }}>
     const KEY = 'maison-eglantine-cart';
     const format = (n) => new Intl.NumberFormat('fr-DZ').format(n) + ' DA';
     const cart = JSON.parse(localStorage.getItem(KEY) || '[]');
@@ -66,7 +72,36 @@ import { deliveryRates } from '../data/delivery';
     const wilayaInput = document.getElementById('wilaya');
     const deliveryFee = document.getElementById('delivery-fee');
     const total = document.getElementById('checkout-total');
+    const agencyField = document.getElementById('agency-field');
+    const agencyInput = document.getElementById('agency');
+    const agencyHelp = document.getElementById('agency-help');
+    const addressField = document.getElementById('address-field');
+    const addressInput = document.getElementById('address');
     let selectedRate = null;
+
+    function updateAgencyDetails() {
+      const agency = agencies.find(item => item.id === agencyInput.value && item.wilaya === wilayaInput.value);
+      agencyHelp.textContent = agency ? agency.address : '';
+    }
+
+    function updateFields() {
+      const desk = document.querySelector('input[name="delivery-method"]:checked')?.value === 'desk';
+      const previousId = agencyInput.value;
+      const available = agencies.filter(item => item.wilaya === wilayaInput.value);
+      agencyField.hidden = !desk;
+      agencyInput.disabled = !desk || !available.length;
+      agencyInput.required = desk;
+      addressField.hidden = desk;
+      addressInput.disabled = desk;
+      addressInput.required = !desk;
+      agencyInput.replaceChildren(new Option(!wilayaInput.value ? 'Choisissez d’abord votre wilaya' : available.length ? 'Sélectionner une agence' : 'Aucune agence répertoriée', ''));
+      available.forEach(agency => agencyInput.add(new Option(agency.commune + ' — ' + agency.name, agency.id)));
+      if (desk && available.some(item => item.id === previousId)) agencyInput.value = previousId;
+      if (desk && wilayaInput.value && !available.length) {
+        agencyHelp.textContent = 'Aucune agence Stop-desk n’est répertoriée pour cette wilaya. Choisissez la livraison à domicile.';
+      } else { updateAgencyDetails(); }
+    }
+    agencyInput.addEventListener('change', updateAgencyDetails);
 
     function updateDelivery() {
       const method = document.querySelector('input[name="delivery-method"]:checked')?.value;
@@ -74,19 +109,27 @@ import { deliveryRates } from '../data/delivery';
       const fee = selectedRate && method ? selectedRate[method] : null;
       deliveryFee.textContent = fee === null ? 'À sélectionner' : format(fee);
       total.textContent = format(subtotal + (fee || 0));
+      updateFields();
     }
 
     wilayaInput.addEventListener('change', updateDelivery);
     document.querySelectorAll('input[name="delivery-method"]').forEach((input) => input.addEventListener('change', updateDelivery));
+
+    updateDelivery();
 
     const form = document.getElementById('checkout-form');
     const errorBox = document.getElementById('checkout-error');
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       const method = document.querySelector('input[name="delivery-method"]:checked')?.value;
-      const fee = selectedRate && method ? selectedRate[method] : 0;
+      const selectedAgency = method === 'desk' ? agencies.find(item => item.id === agencyInput.value && item.wilaya === wilayaInput.value) : null;
       if (!cart.length || !selectedRate || !method) {
         errorBox.textContent = 'Merci de vérifier votre panier, votre wilaya et votre mode de livraison.';
+        errorBox.hidden = false;
+        return;
+      }
+      if (method === 'desk' && !selectedAgency) {
+        errorBox.textContent = 'Choisissez une agence de votre wilaya, ou la livraison à domicile.';
         errorBox.hidden = false;
         return;
       }
@@ -100,7 +143,7 @@ import { deliveryRates } from '../data/delivery';
           method: 'POST',
           headers: { 'content-type': 'application/json' },
           body: JSON.stringify({
-            name: data.get('name'), phone: data.get('phone'), wilaya: data.get('wilaya'), commune: data.get('commune'),
+            name: data.get('name'), phone: data.get('phone'), wilaya: data.get('wilaya'), agencyId: method === 'desk' ? data.get('agencyId') : null,
             address: data.get('address'), note: data.get('note'), deliveryMethod: method, cart
           })
         });
@@ -108,7 +151,7 @@ import { deliveryRates } from '../data/delivery';
         if (!response.ok) throw new Error(order.error || 'La commande n’a pas pu être enregistrée.');
       localStorage.setItem('maison-eglantine-last-order', JSON.stringify({
         orderNumber: order.orderNumber, subtotal: order.subtotal, cart, deliveryFee: order.deliveryFee, total: order.total,
-        wilaya: wilayaInput.value, deliveryMethod: method === 'desk' ? 'Stop-desk' : 'À domicile'
+        wilaya: wilayaInput.value, deliveryMethod: method === 'desk' ? 'Stop-desk' : 'À domicile', agency: order.agency
       }));
       localStorage.removeItem(KEY);
       window.location.href = '/confirmation';
@@ -131,6 +174,7 @@ import { deliveryRates } from '../data/delivery';
     .delivery-method strong{display:block;font-size:15px}.delivery-method small{display:block;font-size:11px;color:var(--muted);margin-top:5px}
     @media(max-width:380px){.delivery-method{grid-template-columns:1fr}}
 
+    .field[hidden]{display:none}.agency-help{font-size:12px;line-height:1.6;color:var(--muted)}
     .checkout-error{margin:0 0 20px;padding:12px 14px;border:1px solid #b4514b;background:#fff6f4;color:#782d28;font-size:14px}
     @media(max-width:800px){.checkout-shell{grid-template-columns:1fr!important}}
   </style>

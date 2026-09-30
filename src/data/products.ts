@@ -71,7 +71,7 @@ export const products: Product[] = [
     description: 'Kemkha est une pièce fluide et élégante, sublimée par une texture délicate, des finitions soignées et une ceinture assortie qui souligne la silhouette avec finesse. Disponible en Vert, Gris et Noir.',
     colors: ['Vert', 'Gris', 'Noir'],
     sizes: ['S', 'M', 'L'],
-    cover: '/images/products/kemkha/gris/01.webp',
+    cover: '/images/products/kemkha/gris/cover.webp',
     images: {
       'Vert': [
         '/images/products/kemkha/vert/01.webp',
@@ -80,6 +80,7 @@ export const products: Product[] = [
         '/images/products/kemkha/vert/04.webp'
       ],
       'Gris': [
+        '/images/products/kemkha/gris/cover.webp',
         '/images/products/kemkha/gris/01.webp',
         '/images/products/kemkha/gris/02.webp',
         '/images/products/kemkha/gris/03.webp',

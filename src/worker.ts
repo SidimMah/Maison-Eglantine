@@ -1,3 +1,5 @@
+import { agencies } from './data/agencies';
+
 type D1Result = { results?: Record<string, unknown>[] };
 
 interface D1PreparedStatement {
@@ -66,16 +68,21 @@ async function createOrder(request: Request, env: Env) {
   const name = cleanText(body.name, 100);
   const phone = cleanText(body.phone, 35);
   const wilaya = cleanText(body.wilaya, 50);
-  const commune = cleanText(body.commune, 80);
-  const address = cleanText(body.address, 300);
+  const homeAddress = cleanText(body.address, 300);
   const note = cleanText(body.note, 600);
   const deliveryMethod = body.deliveryMethod === 'desk' ? 'desk' : body.deliveryMethod === 'home' ? 'home' : '';
+  const agencyId = cleanText(body.agencyId, 20);
+  const agency = deliveryMethod === 'desk' ? agencies.find(item => item.id === agencyId && item.wilaya === wilaya) : undefined;
+  // Keep the existing database compatible: derive the commune and store the full desk destination.
+  const commune = agency?.commune || '';
+  const address = agency ? `${agency.name} (Stop-desk ${agency.id}) — ${agency.address}` : homeAddress;
   const rate = deliveryRates.get(wilaya);
   const cart = Array.isArray(body.cart) ? body.cart : [];
 
-  if (!name || !phone || !wilaya || !commune || !address || !deliveryMethod || !rate || cart.length < 1 || cart.length > 20) {
+  if (!name || !phone || !wilaya || !address || !deliveryMethod || !rate || cart.length < 1 || cart.length > 20) {
     return json({ error: 'Merci de vérifier les informations de la commande.' }, 400);
   }
+  if (deliveryMethod === 'desk' && !agency) return json({ error: 'Veuillez choisir une agence Stop-desk de votre wilaya.' }, 400);
   if (!/^[0-9+() .-]{6,35}$/.test(phone)) return json({ error: 'Le numéro de téléphone semble invalide.' }, 400);
 
   const items = [] as Array<{ slug: string; name: string; color: string; size: string; quantity: number; unitPrice: number; total: number }>;
@@ -100,7 +107,7 @@ async function createOrder(request: Request, env: Env) {
   await env.DB.prepare(`INSERT INTO orders (order_number, customer_name, phone, wilaya, commune, address, delivery_method, delivery_fee, subtotal, total, note, items_json, status, created_at, client_ip)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', datetime('now'), ?)`)
     .bind(number, name, phone, wilaya, commune, address, deliveryMethod, deliveryFee, subtotal, total, note, JSON.stringify(items), request.headers.get('CF-Connecting-IP') || null).run();
-  return json({ orderNumber: number, subtotal, deliveryFee, total });
+  return json({ orderNumber: number, subtotal, deliveryFee, total, agency: agency || null });
 }
 
 async function listOrders(env: Env) {

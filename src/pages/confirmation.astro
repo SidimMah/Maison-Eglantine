@@ -11,6 +11,7 @@ const base = import.meta.env.BASE_URL.endsWith('/')
     <h1 class="section-title">Merci pour votre commande.</h1>
     <p>Votre commande a bien été enregistrée.</p>
     <p id="order-number" class="confirmation-number"></p>
+    <p id="order-agency" hidden></p>
     <p id="order-total" class="confirmation-total"></p>
     <div class="confirmation-actions">
       <a class="btn btn-dark" href={base}>Retour à l’accueil</a>
@@ -20,6 +21,11 @@ const base = import.meta.env.BASE_URL.endsWith('/')
   <script is:inline>
     const order = JSON.parse(localStorage.getItem('maison-eglantine-last-order') || 'null');
     if (order) {
+      if (order.agency) {
+        const destination = document.getElementById('order-agency');
+        destination.textContent = 'Retrait : ' + order.agency.name + ' — ' + order.agency.commune + ' (' + order.wilaya + ')';
+        destination.hidden = false;
+      }
       document.getElementById('order-number').textContent = 'Commande ' + order.orderNumber;
       document.getElementById('order-total').textContent =
         'Total à régler à la livraison : ' + new Intl.NumberFormat('fr-DZ').format(order.total || order.subtotal) + ' DA';
